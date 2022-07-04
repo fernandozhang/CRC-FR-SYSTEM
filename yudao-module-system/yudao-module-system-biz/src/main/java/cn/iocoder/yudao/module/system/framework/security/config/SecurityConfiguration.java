@@ -38,6 +38,8 @@ public class SecurityConfiguration {
                 // OAuth2 API
                 registry.antMatchers(buildAdminApi("/system/oauth2/token")).permitAll();
                 registry.antMatchers(buildAdminApi("/system/oauth2/check-token")).permitAll();
+                // 注册接口
+                registry.antMatchers(buildAdminApi("/system/user/register")).permitAll();
             }
 
         };

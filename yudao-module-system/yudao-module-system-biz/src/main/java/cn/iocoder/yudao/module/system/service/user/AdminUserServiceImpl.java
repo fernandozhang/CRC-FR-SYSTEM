@@ -11,12 +11,15 @@ import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.profile.UserProfileUpdatePasswordReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.profile.UserProfileUpdateReqVO;
+import cn.iocoder.yudao.module.system.controller.admin.user.vo.register.UserRegisterReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.*;
 import cn.iocoder.yudao.module.system.convert.user.UserConvert;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.UserPostDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.tenant.TenantDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO;
 import cn.iocoder.yudao.module.system.dal.mysql.dept.UserPostMapper;
+import cn.iocoder.yudao.module.system.dal.mysql.tenant.TenantMapper;
 import cn.iocoder.yudao.module.system.dal.mysql.user.AdminUserMapper;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import cn.iocoder.yudao.module.system.service.dept.PostService;
@@ -41,6 +44,7 @@ import static cn.iocoder.yudao.module.system.enums.ErrorCodeConstants.*;
 
 /**
  * 后台用户 Service 实现类
+ *
  * @author 芋道源码
  */
 @Service("adminUserService")
@@ -70,6 +74,9 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Resource
     private FileApi fileApi;
+
+    @Resource
+    private TenantMapper tenantMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -285,6 +292,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     /**
      * 获得部门条件：查询指定部门的子部门编号们，包括自身
+     *
      * @param deptId 部门编号
      * @return 部门编号集合
      */
@@ -381,6 +389,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     /**
      * 校验旧密码
+     *
      * @param id          用户 id
      * @param oldPassword 旧密码
      */
@@ -451,6 +460,43 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long registerUser(UserRegisterReqVO reqVO) {
+        // 校验租户编号
+        checkTenantExists(reqVO.getTenantId());
+        // 校验正确性
+        checkCreateOrUpdate(null, reqVO.getUsername(), null, reqVO.getEmail(),
+                null, null);
+        // 插入用户
+        AdminUserDO user = UserConvert.INSTANCE.convert(reqVO);
+        user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
+        user.setPassword(passwordEncoder.encode(reqVO.getPassword())); // 加密密码
+        user.setTenantId(reqVO.getTenantId());// 租户编号
+        userMapper.insert(user);
+        // 插入关联岗位
+        if (CollectionUtil.isNotEmpty(user.getPostIds())) {
+            userPostMapper.insertBatch(convertList(user.getPostIds(),
+                    postId -> new UserPostDO().setUserId(user.getId()).setPostId(postId)));
+        }
+        return user.getId();
+    }
+
+    /**
+     * 校验租户编号是否存在
+     *
+     * @param id
+     */
+    public void checkTenantExists(Long id) {
+        if (id == null) {
+            return;
+        }
+        TenantDO tenant = tenantMapper.selectById(id);
+        if (tenant == null) {
+            throw exception(TENANT_NOT_EXISTS);
+        }
     }
 
 }

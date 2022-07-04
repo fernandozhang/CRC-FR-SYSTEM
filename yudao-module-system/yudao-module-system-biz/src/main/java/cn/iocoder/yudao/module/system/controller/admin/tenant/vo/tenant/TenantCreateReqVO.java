@@ -4,10 +4,7 @@ import lombok.*;
 import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @ApiModel("管理后台 - 租户创建 Request VO")
 @Data
@@ -25,5 +22,11 @@ public class TenantCreateReqVO extends TenantBaseVO {
     @NotEmpty(message = "密码不能为空")
     @Length(min = 4, max = 16, message = "密码长度为 4-16 位")
     private String password;
+
+    @ApiModelProperty(value = "用户邮箱", example = "yudao@iocoder.cn")
+    @NotEmpty(message = "邮箱不能为空")
+    @Email(message = "邮箱格式不正确")
+    @Size(max = 50, message = "邮箱长度不能超过 50 个字符")
+    private String email;
 
 }

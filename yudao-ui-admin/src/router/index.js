@@ -166,7 +166,12 @@ export const constantRoutes = [
         meta: {title: '流程详情', activeMenu: '/bpm/task/my'}
       }
     ]
-  }
+  },
+  {
+    path: '/register',
+    component: (resolve) => require(['@/views/register'], resolve),
+    hidden: true
+  },
 ]
 
 // 防止连续点击多次路由报错

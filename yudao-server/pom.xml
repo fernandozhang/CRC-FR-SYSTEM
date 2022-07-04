@@ -66,6 +66,13 @@
             <artifactId>yudao-spring-boot-starter-protection</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cn.iocoder.boot</groupId>
+            <artifactId>yudao-module-demo-biz</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

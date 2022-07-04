@@ -18,17 +18,17 @@
 			"path": "pages/auth/login",
 			"style": {
 				"navigationBarTitleText": "登录",
-				"navigationStyle":"custom",
+				"navigationStyle": "custom",
 				"app-plus": {
 					"animationType": "slide-in-bottom"
 				}
 			}
 		}, {
-            "path" : "pages/set/userInfo",
-            "style" : {
+			"path": "pages/set/userInfo",
+			"style": {
 				"navigationBarTitleText": "个人资料"
 			}
-        }
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -41,20 +41,23 @@
 		"selectedColor": "#FF5A5F",
 		"borderStyle": "black",
 		"list": [{
-			"text": "首页",
-			"pagePath": "pages/index/index",
-			"iconPath": "static/tarbar/index.png",
-			"selectedIconPath": "static/tarbar/index-active.png"
-		}, {
-			"text": "商品",
-			"pagePath": "pages/product/list",
-			"iconPath": "static/tarbar/product.png",
-			"selectedIconPath": "static/tarbar/product-active.png"
-		}, {
-			"text": "我的",
-			"pagePath": "pages/tabbar/user",
-			"iconPath": "static/tarbar/ucenter.png",
-			"selectedIconPath": "static/tarbar/ucenter-active.png"
-		}]
+				"text": "首页",
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tarbar/index.png",
+				"selectedIconPath": "static/tarbar/index-active.png"
+			},
+			//{
+			// 	"text": "商品",
+			// 	"pagePath": "pages/product/list",
+			// 	"iconPath": "static/tarbar/product.png",
+			// 	"selectedIconPath": "static/tarbar/product-active.png"
+			// }, 
+			{
+				"text": "我的",
+				"pagePath": "pages/tabbar/user",
+				"iconPath": "static/tarbar/ucenter.png",
+				"selectedIconPath": "static/tarbar/ucenter-active.png"
+			}
+		]
 	}
 }

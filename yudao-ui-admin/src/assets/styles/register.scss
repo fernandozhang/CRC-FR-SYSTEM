@@ -34,16 +34,6 @@ $buttonHeight: $buttonH * 1px;
 
 // - - - - - 页面基础设置
 .container {
-  .login-code {
-    width: 33%;
-    height: 38px;
-    float: right;
-    img {
-      cursor: pointer;
-      width:100%;max-width:100px; height:auto;
-      vertical-align: middle;
-    }
-  }
   // 元素
   width: inherit;
   height: inherit;

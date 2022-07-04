@@ -103,6 +103,9 @@
         <el-form-item v-if="form.id === undefined" label="用户名称" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名称" />
         </el-form-item>
+        <el-form-item v-if="form.id === undefined" label="用户邮箱" prop="email">
+          <el-input v-model="form.email" placeholder="请输入用户邮箱" />
+        </el-form-item>
         <el-form-item v-if="form.id === undefined" label="用户密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password />
         </el-form-item>
@@ -181,6 +184,7 @@ export default {
         domain: [{ required: true, message: "绑定域名不能为空", trigger: "blur" }],
         username: [{ required: true, message: "用户名称不能为空", trigger: "blur" }],
         password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }],
+        email: [{ required: true, message: "用户邮箱不能为空", trigger: "blur" }],
       }
     };
   },
