@@ -54,8 +54,6 @@ public interface UserConvert {
 
     List<AdminUserRespDTO> convertList4(List<AdminUserDO> users);
 
-    Map<Long, AdminUserRespDTO> convertMap4(Map<Long, AdminUserDO> map);
-
     AdminUserDO convert(UserRegisterReqVO bean);
 
 }
