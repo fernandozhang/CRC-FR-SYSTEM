@@ -28,6 +28,11 @@
             <artifactId>spring-boot-starter-validation</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- 工作流相关 -->
+        <dependency>
+            <groupId>cn.iocoder.boot</groupId>
+            <artifactId>yudao-spring-boot-starter-flowable</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

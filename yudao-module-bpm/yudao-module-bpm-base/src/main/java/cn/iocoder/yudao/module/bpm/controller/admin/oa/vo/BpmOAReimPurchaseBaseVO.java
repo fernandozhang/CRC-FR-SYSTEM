@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
@@ -26,37 +27,45 @@ public class BpmOAReimPurchaseBaseVO {
     @ApiModelProperty(value = "购物报销表单主键", required = false)
     private Long id;
 
+    @ApiModelProperty(value = "报销申请人员姓名", required = true)
+    @NotEmpty(message = "报销申请人姓名不能为空")
+    private String reimPersonName;
+
     @ApiModelProperty(value = "是否有纸质收据", required = true)
-    @NotEmpty(message = "请选择是否有纸质收据")
+    @NotNull(message = "请选择是否有纸质收据")
     private Boolean paperReceipt;
 
     @ApiModelProperty(value = "付款日期", required = true)
-    @NotEmpty(message = "请选择付款日期")
+    @NotNull(message = "请选择付款日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
     private Date payDate;
 
-    @ApiModelProperty(value = "兑港币汇率", required = true)
-    @NotEmpty(message = "汇率不能为空")
-    private Double exchangeRate;
-
-    @ApiModelProperty(value = "总价", required = true)
-    @NotEmpty(message = "总价不能为空")
-    private Double totalPrice;
-
-    @ApiModelProperty(value = "付款金额单位(1rmb,2hkd,3usd)", required = true)
-    @NotEmpty(message = "付款金额单位不能为空")
-    private Integer totalUnit;
-
-    @ApiModelProperty(value = "总价（港币）", required = true)
-    @NotEmpty(message = "总价（港币）不能为空")
-    private Double totalHkd;
+    @ApiModelProperty(value = "采购项目", required = true)
+    @NotEmpty(message = "采购项目不能为空")
+    private String purchaseObjs;
 
     @ApiModelProperty(value = "物品用途", required = true)
     @NotEmpty(message = "物品用途不能为空")
     private String usage;
 
+    @ApiModelProperty(value = "总价", required = true)
+    @NotNull(message = "总价不能为空")
+    private Double totalPrice;
+
+    @ApiModelProperty(value = "付款金额单位(1rmb,2hkd,3usd)", required = true)
+    @NotNull(message = "付款金额单位不能为空")
+    private Integer totalUnit;
+
+    @ApiModelProperty(value = "兑港币汇率", required = true)
+    @NotNull(message = "汇率不能为空")
+    private Double exchangeRate;
+
+    @ApiModelProperty(value = "总价（港币）", required = true)
+    @NotNull(message = "总价（港币）不能为空")
+    private Double totalHkd;
+
     @ApiModelProperty(value = "购买途径（1线上，2线下）", required = true)
-    @NotEmpty(message = "购买途径不能为空")
+    @NotNull(message = "购买途径不能为空")
     private Integer purBy;
 
     @ApiModelProperty(value = "备注", required = false)
@@ -71,9 +80,6 @@ public class BpmOAReimPurchaseBaseVO {
     @ApiModelProperty(value = "物品照片", required = false)
     private String objsImg;
 
-    @ApiModelProperty(value = "报销批次编号", required = false)
-    private Long batchId;
-
     @AssertTrue
     public Boolean noReceiptAndNoOrderImg() {
         // 没有收据，也没有订单截图
@@ -81,7 +87,6 @@ public class BpmOAReimPurchaseBaseVO {
             return true;
         else
             return false;
-
     }
 
     @AssertTrue

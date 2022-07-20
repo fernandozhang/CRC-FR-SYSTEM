@@ -105,8 +105,20 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickname">
-              <el-input v-model="form.nickname" placeholder="请输入用户昵称" />
+            <el-form-item v-if="form.id === undefined" label="用户名称" prop="username">
+              <el-input v-model="form.username" placeholder="请输入用户名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="form.id === undefined" label="用户密码" prop="password">
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -118,25 +130,13 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="用户昵称" prop="nickname">
+              <el-input v-model="form.nickname" placeholder="请输入用户昵称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="手机号码" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.id === undefined" label="用户名称" prop="username">
-              <el-input v-model="form.username" placeholder="请输入用户名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.id === undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password />
             </el-form-item>
           </el-col>
         </el-row>
@@ -330,8 +330,8 @@ export default {
         username: [
           { required: true, message: "用户名称不能为空", trigger: "blur" }
         ],
-        nickname: [
-          { required: true, message: "用户昵称不能为空", trigger: "blur" }
+        deptId: [
+          { required: false, message: "所属部门不能为空", trigger: "change" }
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" }
@@ -341,11 +341,12 @@ export default {
             type: "email",
             message: "'请输入正确的邮箱地址",
             trigger: ["blur", "change"]
-          }
+          },
+          { required: true, message: "邮箱不能为空", trigger: "blur" }
         ],
         mobile: [
           {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            pattern: /^(1[3|4|5|6|7|8|9][0-9]\d{8})|((5|6|8|9)\d{7})$/,
             message: "请输入正确的手机号码",
             trigger: "blur"
           }

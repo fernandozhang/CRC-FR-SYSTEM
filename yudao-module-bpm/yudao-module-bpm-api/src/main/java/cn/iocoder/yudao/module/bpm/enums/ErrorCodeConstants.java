@@ -4,7 +4,7 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 
 /**
  * 工作流 错误码枚举类
- *
+ * <p>
  * 工作流系统，使用 1-009-000-000 段
  */
 public interface ErrorCodeConstants {
@@ -20,6 +20,7 @@ public interface ErrorCodeConstants {
     ErrorCode OA_DEPART_BM_POST_NOT_EXISTS = new ErrorCode(1009001005, "部门的部门经理不存在");
     ErrorCode OA_HR_POST_NOT_EXISTS = new ErrorCode(1009001006, "HR岗位未设置");
     ErrorCode OA_DAY_LEAVE_ERROR = new ErrorCode(1009001007, "请假天数必须>=1");
+    ErrorCode OA_REIM_PURCHASE_NOT_EXISTS = new ErrorCode(1009001010, "采购报销申请不存在");
 
     // ========== 流程模型 1-009-002-000 ==========
     ErrorCode MODEL_KEY_EXISTS = new ErrorCode(1009002000, "已经存在流程标识为【{}】的流程");

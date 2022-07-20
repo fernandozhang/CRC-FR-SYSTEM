@@ -1,8 +1,11 @@
 package cn.iocoder.yudao.module.bpm.api.task;
 
 import cn.iocoder.yudao.module.bpm.api.task.dto.BpmProcessInstanceCreateReqDTO;
+import org.flowable.task.api.Task;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 流程实例 Api 接口
@@ -20,4 +23,5 @@ public interface BpmProcessInstanceApi {
      */
     String createProcessInstance(Long userId, @Valid BpmProcessInstanceCreateReqDTO reqDTO);
 
+    Map<String, List<Task>> getTaskMapByProcessInstanceIds(List<String> processInstanceIds);
 }

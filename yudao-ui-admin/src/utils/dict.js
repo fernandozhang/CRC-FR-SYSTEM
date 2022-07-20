@@ -56,6 +56,10 @@ export const DICT_TYPE = {
   PAY_ORDER_REFUND_STATUS: 'pay_order_refund_status', // 商户支付订单退款状态
   PAY_REFUND_ORDER_STATUS: 'pay_refund_order_status', // 退款订单状态
   PAY_REFUND_ORDER_TYPE: 'pay_refund_order_type', // 退款订单类别
+
+  // ========== 报销流程 ===========
+  REIM_PURCHASE_WAY_TYPE: 'reim_purchase_way_type', // 采购物品途径
+  REIM_PURCHASE_CURRENCY_TYPE: 'reim_purchase_currency_type', // 采购物品货币种类
 }
 
 /**

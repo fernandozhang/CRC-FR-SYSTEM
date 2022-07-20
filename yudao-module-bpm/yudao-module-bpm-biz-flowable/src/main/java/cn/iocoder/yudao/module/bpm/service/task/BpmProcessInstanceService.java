@@ -8,6 +8,7 @@ import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.engine.delegate.event.FlowableCancelledEvent;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -145,5 +146,11 @@ public interface BpmProcessInstanceService {
      */
     void updateProcessInstanceExtReject(String id, String reason);
 
-
+    /**
+     * 获得流程编号数组对应的任务实例
+     *
+     * @param processInstanceIds 流程编号数组
+     * @return
+     */
+    Map<String, List<Task>> getTaskMapByProcessInstanceIds(List<String> processInstanceIds);
 }

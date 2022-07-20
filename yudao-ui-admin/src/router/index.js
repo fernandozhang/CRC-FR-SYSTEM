@@ -171,6 +171,23 @@ export const constantRoutes = [
     path: '/register',
     component: (resolve) => require(['@/views/register'], resolve),
     hidden: true
+  },{
+    path: '/reim',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [{
+        path: 'purchase/create',
+        component: (resolve) => require(['@/views/bpm/oa/reim/purchase/create'], resolve),
+        name: '发起采购报销',
+        meta: {title: '发起采购报销', icon: 'form', activeMenu: '/reim/purchase'}
+      }, {
+        path: 'purchase/detail',
+        component: (resolve) => require(['@/views/bpm/oa/reim/purchase/detail'], resolve),
+        name: '查看采购报销',
+        meta: {title: '查看采购报销', icon: 'view', activeMenu: '/reim/purchase'}
+      }
+    ]
   },
 ]
 

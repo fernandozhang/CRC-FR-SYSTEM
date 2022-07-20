@@ -272,6 +272,11 @@ public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService 
                 BpmProcessInstanceConvert.INSTANCE.convert(this, processInstance, instanceExtDO.getResult()));
     }
 
+    @Override
+    public Map<String, List<Task>> getTaskMapByProcessInstanceIds(List<String> processInstanceIds) {
+        return taskService.getTaskMapByProcessInstanceIds(processInstanceIds);
+    }
+
     private void deleteProcessInstance(String id, String reason) {
         runtimeService.deleteProcessInstance(id, reason);
     }
