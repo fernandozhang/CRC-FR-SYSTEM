@@ -9,6 +9,12 @@
 
 如果这个项目让你有所收获，记得 Star 关注哦，这对我是非常不错的鼓励与支持。
 
+## 🐶 新手必读
+
+* 演示地址：<http://dashboard.yudao.iocoder.cn>
+* 启动文档：<https://doc.iocoder.cn/quick-start/>
+* 视频教程：<https://doc.iocoder.cn/video/>
+
 ## 🐯 平台简介
 
 **芋道**，以开发者为中心，打造中国第一流的快速开发平台，全部开源，个人与企业可 100% 免费使用。
@@ -17,13 +23,14 @@
 >
 > 😜 给项目点点 Star 吧，这对我们真的很重要！
 
-* 前端采用 [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) ，正在支持 Vue 3 + ElementUI Plus 最新方案。
+* 前端 vue2 版本采用 [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+* 前端 vue3 版本采用 [vue-element-plus-admin](https://gitee.com/kailong110120130/vue-element-plus-admin)
 * 后端采用 Spring Boot、MySQL + MyBatis Plus、Redis + Redisson。
 * 数据库可使用 MySQL、Oracle、PostgreSQL、SQL Server、MariaDB、国产达梦 DM、TiDB 等
 * 权限认证使用 Spring Security & Token & Redis，支持多终端、多种用户的认证系统。
 * 支持加载动态权限菜单，按钮级别权限控制，本地缓存提升性能。
 * 支持 SaaS 多租户系统，可自定义每个租户的权限，提供透明化的多租户底层封装。
-* 工作流使用 Activiti + Flowable，支持动态表单、在线设计流程、多种任务分配方式。
+* 工作流使用 Flowable，支持动态表单、在线设计流程、会签 / 或签、多种任务分配方式。
 * 高效率开发，使用代码生成器可以一键生成前后端代码 + 单元测试 + Swagger 接口文档 + Validator 参数校验。
 * 集成微信小程序、微信公众号、企业微信、钉钉等三方登陆，集成支付宝、微信等支付与退款。
 * 集成阿里云、腾讯云、云片等短信渠道，集成 MinIO、阿里云、腾讯云、七牛云等云存储服务。
@@ -34,15 +41,6 @@
 | `yudao-cloud`  | Spring Cloud 微服务       | **[Gitee](https://gitee.com/zhijiantianya/yudao-cloud)** &nbsp;&nbsp;&nbsp; [Github](https://github.com/YunaiV/yudao-cloud)         |
 | `Spring-Boot-Labs` | Spring Boot & Cloud 入门 | **[Gitee](https://gitee.com/zhijiantianya/SpringBoot-Labs)** &nbsp;&nbsp;&nbsp; [Github](https://github.com/YunaiV/SpringBoot-Labs) |
 
-## 🐶 在线体验
-
-演示地址：<http://dashboard.yudao.iocoder.cn>
-* 账号密码：admin/admin123
-
-文档地址：<http://www.iocoder.cn/categories/Yudao/>
-* [《如何搭建环境》](http://www.iocoder.cn/categories/Yudao/?yudao)
-
-> 未来会补充文档和视频，方便胖友冲冲冲！
 
 ## 🐼 内置功能
 
@@ -167,7 +165,7 @@ ps：核心功能已经实现，正在对接微信小程序中...
 | [Spring MVC](https://github.com/spring-projects/spring-framework/tree/master/spring-webmvc) | MVC 框架           | 5.3.20   | [文档](http://www.iocoder.cn/SpringMVC/MVC/?yudao)               |
 | [Spring Security](https://github.com/spring-projects/spring-security)                       | Spring 安全框架      | 5.6.5    | [文档](http://www.iocoder.cn/Spring-Boot/Spring-Security/?yudao) |
 | [Hibernate Validator](https://github.com/hibernate/hibernate-validator)                     | 参数校验组件           | 6.2.3    | [文档](http://www.iocoder.cn/Spring-Boot/Validation/?yudao)      |
-| [Activiti](https://github.com/Activiti/Activiti)                                            | 工作流引擎            | 7.1.0.M6 | [文档](TODO)                                                     |
+| [Flowable](https://github.com/flowable/flowable-engine)                                            | 工作流引擎            | 6.7.0 | [文档](https://doc.iocoder.cn/bpm/)                                                     |
 | [Quartz](https://github.com/quartz-scheduler)                                               | 任务调度组件           | 2.3.2    | [文档](http://www.iocoder.cn/Spring-Boot/Job/?yudao)             |
 | [Knife4j](https://gitee.com/xiaoym/knife4j)                                                 | Swagger 增强 UI 实现 | 3.0.3    | [文档](http://www.iocoder.cn/Spring-Boot/Swagger/?yudao)         |
 | [Resilience4j](https://github.com/resilience4j/resilience4j)                                | 服务保障组件           | 1.7.1    | [文档](http://www.iocoder.cn/Spring-Boot/Resilience4j/?yudao)    |
@@ -179,12 +177,28 @@ ps：核心功能已经实现，正在对接微信小程序中...
 | [JUnit](https://junit.org/junit5/)                                                          | Java 单元测试框架      | 5.8.2    | -                                                              |
 | [Mockito](https://github.com/mockito/mockito)                                               | Java Mock 框架     | 4.0.0    | -                                                              |
 
-### 前端
+### vue2 前端
 
 | 框架                                                                           | 说明            | 版本     |
 |------------------------------------------------------------------------------|---------------|--------|
 | [Vue](https://cn.vuejs.org/index.html)                                       | JavaScript 框架 | 2.6.12 |
 | [Vue Element Admin](https://panjiachen.github.io/vue-element-admin-site/zh/) | 后台前端解决方案      | -      |
+
+### vue3 前端
+
+| 框架                                                                           | 说明            | 版本     |
+|------------------------------------------------------------------------------|---------------|--------|
+| [Vue](https://staging-cn.vuejs.org/) | vue 框架 | 3.2.37 |
+| [Vite](https://cn.vitejs.dev//) | 开发与构建工具 | 3.0.1 |
+| [Element Plus](https://element-plus.org/zh-CN/) | Element Plus | 2.2.9 |
+| [TypeScript](https://www.typescriptlang.org/docs/) | JavaScript 的超集 | 4.7.4 |
+| [pinia](https://pinia.vuejs.org/) | Vue 存储库 替代 vuex5 | 2.0.16 |
+| [vueuse](https://vueuse.org//) | 常用工具集 | 8.9.4 |
+| [vue-i18n](https://kazupon.github.io/vue-i18n/zh/introduction.html/) | 国际化 | 9.1.10 |
+| [vue-router](https://router.vuejs.org/) | vue 路由 | 4.1.2 |
+| [windicss](https://cn.windicss.org/) | 下一代工具优先的 CSS 框架 | 3.5.6 |
+| [iconify](https://icon-sets.iconify.design/) | 在线图标库 | 2.2.1 |
+| [wangeditor](https://www.wangeditor.com/) | 富文本编辑器 | 5.1.11 |
 
 ## 🐷 演示图
 
