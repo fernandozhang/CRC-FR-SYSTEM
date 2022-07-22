@@ -61,3 +61,11 @@ export function getTaskListByProcessInstanceId(processInstanceId) {
     method: 'get',
   })
 }
+
+export function isFirstTask(query) {
+  return request({
+    url: '/bpm/task/isFirst',
+    method: 'get',
+    params: query
+  })
+}

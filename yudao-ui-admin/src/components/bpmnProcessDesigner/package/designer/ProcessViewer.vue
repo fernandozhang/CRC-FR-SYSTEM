@@ -120,7 +120,7 @@ export default {
       this.bpmnModeler.getDefinitions().rootElements[0].flowElements?.forEach(n => {
         let activity = activityList.find(m => m.key === n.id) // 找到对应的活动
         if (n.$type === 'bpmn:UserTask') { // 用户任务
-          debugger
+          // debugger
           if (!activity) {
             return;
           }

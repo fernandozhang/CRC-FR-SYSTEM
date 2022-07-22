@@ -143,7 +143,7 @@
         width="200"
       >
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
@@ -151,7 +151,7 @@
             v-hasPermi="['bpm:oa-reim-purchase:create']"
             v-show="scope.row.result === 1"
             >取消报销</el-button
-          >
+          > -->
           <el-button
             size="mini"
             type="text"

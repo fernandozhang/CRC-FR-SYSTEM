@@ -128,4 +128,19 @@ public interface BpmTaskService {
      */
     void updateTaskExtAssign(Task task);
 
+    /**
+     * 驳回任务
+     *
+     * @param userId 用户编号
+     * @param reqVO  驳回请求
+     */
+    void backTask(Long userId, @Valid BpmTaskTackBackReqVO reqVO);
+
+    /**
+     * 查询当前任务是否为第一节点
+     *
+     * @param userId 用户编号
+     * @param reqVO  查询请求
+     */
+    Boolean isFirstTask(Long userId, @Valid BpmTaskIsFirstReqVO reqVO);
 }

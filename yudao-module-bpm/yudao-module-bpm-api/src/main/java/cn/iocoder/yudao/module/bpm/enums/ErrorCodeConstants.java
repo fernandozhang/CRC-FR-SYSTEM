@@ -62,4 +62,10 @@ public interface ErrorCodeConstants {
     ErrorCode USER_GROUP_NOT_EXISTS = new ErrorCode(1009011000, "用户组不存在");
     ErrorCode USER_GROUP_IS_DISABLE = new ErrorCode(1009011001, "名字为【{}】的用户组已被禁用");
 
+    // ========== 流程任务驳回 1-009-012-000 ==========
+    ErrorCode TASK_TACK_BACK_FAIL_SUSPENDED = new ErrorCode(1009012000, "任务处于挂起状态");
+    ErrorCode TASK_TACK_BACK_FAIL_FIRST_NODE = new ErrorCode(1009012001, "当前节点为初始任务节点，不能驳回");
+    ErrorCode TASK_TACK_BACK_FAIL_MANY_TO_MANY = new ErrorCode(1009012002, "任务出现多对多情况，无法驳回");
+    ErrorCode TASK_TACK_BACK_FAIL_INSTANCE_NOT_FOUND = new ErrorCode(1009012002, "未找到流程实例，流程可能已发生变化");
+    ErrorCode TASK_TACK_BACK_FAIL_CANNOT_CANCEL_START = new ErrorCode(1009012002, "无法取消或开始活动");
 }
