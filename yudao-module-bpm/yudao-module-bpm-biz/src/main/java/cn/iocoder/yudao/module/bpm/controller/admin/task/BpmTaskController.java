@@ -74,19 +74,4 @@ public class BpmTaskController {
         taskService.updateTaskAssignee(getLoginUserId(), reqVO);
         return success(true);
     }
-
-    @PutMapping("/back")
-    @ApiOperation("驳回任务")
-    @PreAuthorize("@ss.hasPermission('bpm:task:update')")
-    public CommonResult<Boolean> tackBackTask(@Valid @RequestBody BpmTaskTackBackReqVO reqVO) {
-        taskService.backTask(getLoginUserId(), reqVO);
-        return success(true);
-    }
-
-    @GetMapping("isFirst")
-    @ApiOperation("查询是否为第一个任务节点")
-    @PreAuthorize("@ss.hasPermission('bpm:task:query')")
-    public CommonResult<Boolean> getTodoTaskPage(@Valid BpmTaskIsFirstReqVO pageVO) {
-        return success(taskService.isFirstTask(getLoginUserId(), pageVO));
-    }
 }

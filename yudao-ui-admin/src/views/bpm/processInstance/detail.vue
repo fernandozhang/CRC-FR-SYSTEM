@@ -41,7 +41,7 @@
           <el-button  icon="el-icon-circle-close" type="danger" size="mini" @click="handleAudit(item, false)">不通过</el-button>
           <!-- <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleUpdateAssignee(item)">转办</el-button>
           <el-button icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate(item)">委派</el-button> -->
-          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleBack(item)" v-if="checkIsFirstTask(item)==false">退回</el-button>
+          <!-- <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleBack(item)">退回</el-button> -->
         </div>
       </el-col>
     </el-card>
@@ -110,7 +110,7 @@ import store from "@/store";
 import {decodeFields} from "@/utils/formGenerator";
 import Parser from '@/components/parser/Parser'
 import {createProcessInstance, getProcessInstance} from "@/api/bpm/processInstance";
-import {approveTask, getTaskListByProcessInstanceId, rejectTask, updateTaskAssignee,backTask, isFirstTask} from "@/api/bpm/task";
+import {approveTask, getTaskListByProcessInstanceId, rejectTask, updateTaskAssignee} from "@/api/bpm/task";
 import {getDate} from "@/utils/dateUtils";
 import {listSimpleUsers} from "@/api/system/user";
 import {getActivityList} from "@/api/bpm/activity";
@@ -388,32 +388,17 @@ export default {
     },
     /** 处理审批退回的操作 */
     handleBack(task) {
-      const index = this.runningTasks.indexOf(task);
-      this.$refs['form' + index][0].validate(valid => {
-        if (!valid) {
-          return;
-        }
-        // this.$modal.msgError("暂不支持【退回】功能！");
-        // 可参考 http://blog.wya1.com/article/636697030/details/7296
-        const data = {
-          id: task.id,
-          reason: this.auditForms[index].reason
-        }
-        backTask(data).then(response => {
-          this.$modal.msgSuccess("回退成功！");
-          this.getDetail(); // 获得最新详情
-        });
-      })
+      this.$modal.msgError("暂不支持【退回】功能！");
+      // 可参考 http://blog.wya1.com/article/636697030/details/7296
+      // const data = {
+      //   id: task.id,
+      //   assigneeUserId: 1
+      // }
+      // backTask(data).then(response => {
+      //   this.$modal.msgSuccess("回退成功！");
+      //   this.getDetail(); // 获得最新详情
+      // });
     },
-    /** 查询是否为第一个任务节点 */
-    checkIsFirstTask(task){
-      let data = {
-        id: task.id
-      }
-      isFirstTask(data).then(response=>{
-        return response.data
-      });
-    }
   }
 };
 </script>
