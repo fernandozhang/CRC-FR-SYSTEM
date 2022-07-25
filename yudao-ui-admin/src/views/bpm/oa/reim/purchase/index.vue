@@ -155,6 +155,15 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-edit"
+            @click="handleEdit(scope.row)"
+            v-hasPermi="['bpm:oa-reim-purchase:create']"
+            v-show="scope.row.result === 3"
+            >编辑</el-button
+          > 
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-view"
             @click="handleDetail(scope.row)"
             v-hasPermi="['bpm:oa-reim-purchase:query']"
@@ -188,7 +197,7 @@ import { getDictDatas, DICT_TYPE } from "@/utils/dict";
 import { cancelProcessInstance } from "@/api/bpm/processInstance";
 
 export default {
-  name: "Purchase",
+  name: "采购报销",
   components: {},
   data() {
     return {
@@ -278,6 +287,13 @@ export default {
           this.getList();
           this.$modal.msgSuccess("取消成功");
         });
+    },
+    /** 详情按钮操作 */
+    handleEdit(row) {
+      this.$router.push({
+        path: "/reim/purchase/create",
+        query: { id: row.id },
+      });
     },
   },
 };

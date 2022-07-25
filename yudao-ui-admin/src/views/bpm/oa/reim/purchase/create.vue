@@ -92,12 +92,10 @@
           />
         </el-col>
       </el-form-item>
-      <el-form-item
-        prop="exchangeRate"
-        v-show="
+      <el-form-item prop="exchangeRate">
+        <!-- v-show="
           form.totalUnit != undefined && form.totalUnit != currencyTypeHKD
-        "
-      >
+        " -->
         <span slot="label">
           <el-tooltip
             content="根据付款日期和交易币种，查询网址 https://tw.exchange-rates.org "
@@ -111,13 +109,7 @@
           <el-input :rows="3" v-model="form.exchangeRate" :disabled="true" />
         </el-col>
       </el-form-item>
-      <el-form-item
-        label="总价（港币）"
-        prop="totalHkd"
-        v-show="
-          form.totalUnit != undefined && form.totalUnit != currencyTypeHKD
-        "
-      >
+      <el-form-item label="总价（港币）" prop="totalHkd">
         <el-col :span="10">
           <el-input :rows="3" v-model="form.totalHkd" :disabled="true" />
         </el-col>
@@ -157,12 +149,14 @@
 </template>
 
 <script>
-import { createReim } from "@/api/bpm/purchase";
+import { createReim, getReim } from "@/api/bpm/purchase";
 import { getDictDatas, DICT_TYPE } from "@/utils/dict";
 import ImageUpload from "@/components/ImageUpload";
+import { getExchangeRate } from "@/utils/exchangeRate";
+import { parseTime } from "@/utils/ruoyi";
 
 export default {
-  name: "ReimPurchaseCreate",
+  name: "PurchaseCreate",
   components: { ImageUpload },
   data() {
     return {
@@ -229,9 +223,17 @@ export default {
           return time.getTime() > Date.now() || time.getTime() < threeMonths;
         },
       },
+
+      /**采购报销编号 */
+      id: undefined,
     };
   },
-  created() {},
+  created() {
+    this.id = this.$route.query.id;
+    if (this.id) {
+      this.getDetail();
+    }
+  },
   methods: {
     /** 提交按钮 */
     submitForm() {
@@ -247,16 +249,22 @@ export default {
         });
       });
     },
-    getExchangeRate(payDate, currency) {
+    queryExchangeRate(payDate, currency) {
       if (
         payDate != undefined &&
         payDate &&
         currency &&
         currency != undefined
       ) {
-        if (currency == 1) this.form.exchangeRate = 1.3;
-        else if (currency == 2) this.form.exchangeRate = 1;
-        else if (currency == 3) this.form.exchangeRate = 7.8;
+        if (currency == 1) {
+          getExchangeRate("CNY", parseTime(payDate, "{y}-{m}-{d}")).then(
+            (resp) => (this.form.exchangeRate = resp)
+          );
+        } else if (currency == 2) this.form.exchangeRate = 1.0;
+        else if (currency == 3)
+          getExchangeRate("USD", parseTime(payDate, "{y}-{m}-{d}")).then(
+            (resp) => (this.form.exchangeRate = resp)
+          );
         else console.log("unknown currency!");
       }
     },
@@ -283,6 +291,14 @@ export default {
       }
       this.$refs.form.clearValidate();
     },
+    /** 获得请假信息 */
+    getDetail() {
+      getReim(this.id).then((response) => {
+        this.form = response.data;
+        // 去掉id
+        this.form.id = undefined;
+      });
+    },
   },
   watch: {
     "form.totalPrice"(value) {
@@ -298,7 +314,7 @@ export default {
 
     "form.totalUnit"(value) {
       // 监听币种
-      this.getExchangeRate(this.form.payDate, value);
+      this.queryExchangeRate(this.form.payDate, value);
     },
 
     "form.exchangeRate"(value) {
@@ -313,7 +329,7 @@ export default {
     },
     "form.payDate"(value) {
       // 监听付款日期
-      this.getExchangeRate(value, this.form.totalUnit);
+      this.queryExchangeRate(value, this.form.totalUnit);
     },
   },
 };

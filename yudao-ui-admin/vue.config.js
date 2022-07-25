@@ -42,7 +42,15 @@ module.exports = {
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
-      }
+      },
+      [process.env.VUE_APP_EXCHANGE_RATE_ORG]: {
+        target: `https://tw.exchange-rates.org/Rate/`,
+        // target: `http://api-dashboard.yudao.iocoder.cn`,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_EXCHANGE_RATE_ORG]: ''
+        }
+      },
     },
     disableHostCheck: true
   },
