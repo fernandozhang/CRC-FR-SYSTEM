@@ -7,9 +7,7 @@ import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 const { t } = useI18n()
 // 表单校验
 export const rules = reactive({
-  name: [required],
-  code: [required],
-  sort: [required],
+  nickname: [required],
   status: [required]
 })
 // crudSchemas
@@ -28,6 +26,9 @@ const crudSchemas = reactive<CrudSchema[]>([
   {
     label: '用户账号',
     field: 'username',
+    form: {
+      show: false
+    },
     search: {
       show: true
     }
@@ -100,7 +101,7 @@ const crudSchemas = reactive<CrudSchema[]>([
   },
   {
     label: t('common.createTime'),
-    field: 'daterange',
+    field: 'createTime',
     table: {
       show: false
     },
@@ -114,8 +115,38 @@ const crudSchemas = reactive<CrudSchema[]>([
       show: true,
       component: 'DatePicker',
       componentProps: {
-        type: 'daterange',
-        valueFormat: 'YYYY-MM-DD HH:mm:ss'
+        type: 'datetimerange',
+        valueFormat: 'YYYY-MM-DD HH:mm:ss',
+        defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 2, 1, 23, 59, 59)],
+        shortcuts: [
+          {
+            text: '近一周',
+            value: () => {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              return [start, end]
+            }
+          },
+          {
+            text: '近一个月',
+            value: () => {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              return [start, end]
+            }
+          },
+          {
+            text: '近三个月',
+            value: () => {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              return [start, end]
+            }
+          }
+        ]
       }
     }
   },

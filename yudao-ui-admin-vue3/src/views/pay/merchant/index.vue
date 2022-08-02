@@ -19,11 +19,6 @@ const { register, tableObject, methods } = useTable<MerchantVO>({
 })
 const { getList, setSearchParams, delList, exportList } = methods
 
-// 导出操作
-const handleExport = async () => {
-  await exportList('商户数据.xls')
-}
-
 // ========== CRUD 相关 ==========
 const actionLoading = ref(false) // 遮罩层
 const actionType = ref('') // 操作按钮的类型
@@ -74,11 +69,6 @@ const submitForm = async () => {
   }
 }
 
-// 删除操作
-const handleDelete = (row: MerchantVO) => {
-  delList(row.id, false)
-}
-
 // ========== 详情相关 ==========
 const detailRef = ref() // 详情 Ref
 
@@ -108,7 +98,7 @@ getList()
         type="warning"
         v-hasPermi="['system:post:export']"
         :loading="tableObject.exportLoading"
-        @click="handleExport"
+        @click="exportList('商户数据.xls')"
       >
         <Icon icon="ep:download" class="mr-5px" /> {{ t('action.export') }}
       </el-button>
@@ -139,7 +129,7 @@ getList()
           v-hasPermi="['system:post:update']"
           @click="handleUpdate(row)"
         >
-          <Icon icon="ep:edit" class="mr-5px" /> {{ t('action.edit') }}
+          <Icon icon="ep:edit" class="mr-1px" /> {{ t('action.edit') }}
         </el-button>
         <el-button
           link
@@ -147,15 +137,15 @@ getList()
           v-hasPermi="['system:post:update']"
           @click="handleDetail(row)"
         >
-          <Icon icon="ep:view" class="mr-5px" /> {{ t('action.detail') }}
+          <Icon icon="ep:view" class="mr-1px" /> {{ t('action.detail') }}
         </el-button>
         <el-button
           link
           type="primary"
           v-hasPermi="['system:post:delete']"
-          @click="handleDelete(row)"
+          @click="delList(row.id, false)"
         >
-          <Icon icon="ep:delete" class="mr-5px" /> {{ t('action.del') }}
+          <Icon icon="ep:delete" class="mr-1px" /> {{ t('action.del') }}
         </el-button>
       </template>
     </Table>

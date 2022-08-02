@@ -38,10 +38,6 @@ const handleTypeUpdate = async (row: DictTypeVO) => {
   const res = await DictTypeApi.getDictTypeApi(row.id)
   unref(typeFormRef)?.setValues(res)
 }
-// 字典分类删除操作
-const handleTypeDelete = async (row: DictTypeVO) => {
-  await delTypeList(row.id, false)
-}
 
 // ========== 字典数据列表相关 ==========
 const tableTypeSelect = ref(false)
@@ -70,10 +66,6 @@ const handleDataUpdate = async (row: DictDataVO) => {
   // 设置数据
   const res = await DictDataApi.getDictDataApi(row.id)
   unref(dataFormRef)?.setValues(res)
-}
-// 字典数据删除操作
-const handleDataDelete = async (row: DictTypeVO) => {
-  await delDataList(row.id, false)
 }
 // 字典分类点击行事件
 const parentType = ref('')
@@ -189,15 +181,15 @@ onMounted(async () => {
             v-hasPermi="['system:dict:update']"
             @click="handleTypeUpdate(row)"
           >
-            <Icon icon="ep:edit" class="mr-5px" /> {{ t('action.edit') }}
+            <Icon icon="ep:edit" class="mr-1px" /> {{ t('action.edit') }}
           </el-button>
           <el-button
             link
             type="primary"
             v-hasPermi="['system:dict:delete']"
-            @click="handleTypeDelete(row)"
+            @click="delTypeList(row.id, false)"
           >
-            <Icon icon="ep:delete" class="mr-5px" /> {{ t('action.del') }}
+            <Icon icon="ep:delete" class="mr-1px" /> {{ t('action.del') }}
           </el-button>
         </template>
       </Table>
@@ -221,7 +213,7 @@ onMounted(async () => {
         <!-- 操作工具栏 -->
         <div class="mb-10px">
           <el-button type="primary" v-hasPermi="['system:dict:create']" @click="handleDataCreate">
-            <Icon icon="ep:zoom-in" class="mr-5px" /> {{ t('action.add') }}
+            <Icon icon="ep:zoom-in" class="mr-1px" /> {{ t('action.add') }}
           </el-button>
         </div>
         <Table
@@ -246,15 +238,15 @@ onMounted(async () => {
               v-hasPermi="['system:dict:update']"
               @click="handleDataUpdate(row)"
             >
-              <Icon icon="ep:edit" class="mr-5px" /> {{ t('action.edit') }}
+              <Icon icon="ep:edit" class="mr-1px" /> {{ t('action.edit') }}
             </el-button>
             <el-button
               link
               type="primary"
               v-hasPermi="['system:dict:delete']"
-              @click="handleDataDelete(row)"
+              @click="delDataList(row.id, false)"
             >
-              <Icon icon="ep:delete" class="mr-5px" /> {{ t('action.del') }}
+              <Icon icon="ep:delete" class="mr-1px" /> {{ t('action.del') }}
             </el-button>
           </template>
         </Table>

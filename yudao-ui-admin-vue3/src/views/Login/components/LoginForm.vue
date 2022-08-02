@@ -13,7 +13,14 @@ import {
 } from 'element-plus'
 import { reactive, ref, unref, onMounted, computed, watch } from 'vue'
 import * as LoginApi from '@/api/login'
-import { setToken, setTenantId } from '@/utils/auth'
+import {
+  setToken,
+  setTenantId,
+  getUsername,
+  getRememberMe,
+  getPassword,
+  getTenantName
+} from '@/utils/auth'
 import { useUserStoreWithOut } from '@/store/modules/user'
 import { useCache } from '@/hooks/web/useCache'
 import { usePermissionStore } from '@/store/modules/permission'
@@ -40,12 +47,16 @@ const iconHouse = useIcon({ icon: 'ep:house' })
 const iconAvatar = useIcon({ icon: 'ep:avatar' })
 const iconLock = useIcon({ icon: 'ep:lock' })
 const iconCircleCheck = useIcon({ icon: 'ep:circle-check' })
-const remember = ref(false)
-const LoginRules = {
+const LoginCaptchaRules = {
   tenantName: [required],
   username: [required],
   password: [required],
   code: [required]
+}
+const LoginRules = {
+  tenantName: [required],
+  username: [required],
+  password: [required]
 }
 const loginLoading = ref(false)
 const loginData = reactive({
@@ -61,6 +72,7 @@ const loginData = reactive({
     tenantName: '芋道源码',
     username: 'admin',
     password: 'admin123',
+    rememberMe: false,
     code: '',
     uuid: ''
   }
@@ -69,13 +81,30 @@ const loginData = reactive({
 // 获取验证码
 const getCode = async () => {
   const res = await LoginApi.getCodeImgApi()
-  loginData.codeImg = 'data:image/gif;base64,' + res.img
-  loginData.loginForm.uuid = res.uuid
+  loginData.captchaEnable = res.enable
+  if (res.enable) {
+    loginData.codeImg = 'data:image/gif;base64,' + res.img
+    loginData.loginForm.uuid = res.uuid
+  }
 }
 //获取租户ID
 const getTenantId = async () => {
   const res = await LoginApi.getTenantIdByNameApi(loginData.loginForm.tenantName)
   setTenantId(res)
+}
+// 记住我
+const getCookie = () => {
+  const username = getUsername()
+  const password = getPassword()
+  const rememberMe = getRememberMe()
+  const tenantName = getTenantName()
+  loginData.loginForm = {
+    ...loginData.loginForm,
+    username: username ? username : loginData.loginForm.username,
+    password: password ? password : loginData.loginForm.password,
+    rememberMe: rememberMe ? getRememberMe() : false,
+    tenantName: tenantName ? tenantName : loginData.loginForm.tenantName
+  }
 }
 // 登录
 const handleLogin = async () => {
@@ -103,7 +132,7 @@ const getRoutes = async () => {
   // 后端过滤菜单
   const res = await LoginApi.getAsyncRoutesApi()
   wsCache.set('roleRouters', res)
-  await permissionStore.generateRoutes(res).catch(() => {})
+  await permissionStore.generateRoutes(res)
   permissionStore.getAddRouters.forEach((route) => {
     addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
   })
@@ -111,6 +140,16 @@ const getRoutes = async () => {
   push({ path: redirect.value || permissionStore.addRouters[0].path })
 }
 
+// 社交登录
+const doSocialLogin = async (type: string) => {
+  loginLoading.value = true
+  // 计算 redirectUri
+  const redirectUri =
+    location.origin + '/social-login?type=' + type + '&redirect=' + (redirect.value || '/')
+  // 进行跳转
+  const res = await LoginApi.socialAuthRedirectApi(type, encodeURIComponent(redirectUri))
+  window.open = res
+}
 watch(
   () => currentRoute.value,
   (route: RouteLocationNormalizedLoaded) => {
@@ -120,14 +159,15 @@ watch(
     immediate: true
   }
 )
-onMounted(() => {
-  getCode()
+onMounted(async () => {
+  await getCode()
+  getCookie()
 })
 </script>
 <template>
   <el-form
     :model="loginData.loginForm"
-    :rules="LoginRules"
+    :rules="loginData.captchaEnable ? LoginCaptchaRules : LoginRules"
     label-position="top"
     class="login-form"
     label-width="120px"
@@ -165,7 +205,7 @@ onMounted(() => {
           <el-input
             v-model="loginData.loginForm.password"
             type="password"
-            :placeholder="t('login.password')"
+            :placeholder="t('login.passwordPlaceholder')"
             show-password
             @keyup.enter="handleLogin"
             :prefix-icon="iconLock"
@@ -173,12 +213,12 @@ onMounted(() => {
         </el-form-item>
       </el-col>
       <el-col :span="24" style="padding-left: 10px; padding-right: 10px">
-        <el-form-item prop="code">
+        <el-form-item prop="code" v-if="loginData.captchaEnable">
           <el-row justify="space-between" style="width: 100%">
             <el-col :span="14">
               <el-input
                 v-model="loginData.loginForm.code"
-                :placeholder="t('login.code')"
+                :placeholder="t('login.codePlaceholder')"
                 @keyup.enter="handleLogin"
                 :prefix-icon="iconCircleCheck"
                 style="width: 90%"
@@ -199,7 +239,9 @@ onMounted(() => {
         <el-form-item>
           <el-row justify="space-between" style="width: 100%">
             <el-col :span="6">
-              <el-checkbox v-model="remember">{{ t('login.remember') }}</el-checkbox>
+              <el-checkbox v-model="loginData.loginForm.rememberMe">
+                {{ t('login.remember') }}
+              </el-checkbox>
             </el-col>
             <el-col :span="12" :offset="6">
               <el-link type="primary" style="float: right">{{ t('login.forgetPassword') }}</el-link>
@@ -209,24 +251,28 @@ onMounted(() => {
       </el-col>
       <el-col :span="24" style="padding-left: 10px; padding-right: 10px">
         <el-form-item>
-          <el-button :loading="loginLoading" type="primary" class="w-[100%]" @click="handleLogin">{{
-            t('login.login')
-          }}</el-button>
+          <el-button :loading="loginLoading" type="primary" class="w-[100%]" @click="handleLogin">
+            {{ t('login.login') }}
+          </el-button>
         </el-form-item>
       </el-col>
       <el-col :span="24" style="padding-left: 10px; padding-right: 10px">
         <el-form-item>
           <el-row justify="space-between" style="width: 100%" :gutter="5">
             <el-col :span="8">
-              <el-button class="w-[100%]" @click="setLoginState(LoginStateEnum.MOBILE)">{{
-                t('login.btnMobile')
-              }}</el-button>
+              <el-button class="w-[100%]" @click="setLoginState(LoginStateEnum.MOBILE)">
+                {{ t('login.btnMobile') }}
+              </el-button>
             </el-col>
             <el-col :span="8">
-              <el-button class="w-[100%]">{{ t('login.btnQRCode') }}</el-button>
+              <el-button class="w-[100%]" @click="setLoginState(LoginStateEnum.QR_CODE)">
+                {{ t('login.btnQRCode') }}
+              </el-button>
             </el-col>
             <el-col :span="8">
-              <el-button class="w-[100%]">{{ t('login.btnRegister') }}</el-button>
+              <el-button class="w-[100%]" @click="setLoginState(LoginStateEnum.REGISTER)">
+                {{ t('login.btnRegister') }}
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -240,24 +286,28 @@ onMounted(() => {
               :size="iconSize"
               class="cursor-pointer anticon"
               :color="iconColor"
+              @click="doSocialLogin('github')"
             />
             <Icon
               icon="ant-design:wechat-filled"
               :size="iconSize"
               class="cursor-pointer anticon"
               :color="iconColor"
+              @click="doSocialLogin('wechat')"
             />
             <Icon
               icon="ant-design:alipay-circle-filled"
               :size="iconSize"
               :color="iconColor"
               class="cursor-pointer anticon"
+              @click="doSocialLogin('alipay')"
             />
             <Icon
-              icon="ant-design:weibo-circle-filled"
+              icon="ant-design:dingtalk-circle-filled"
               :size="iconSize"
               :color="iconColor"
               class="cursor-pointer anticon"
+              @click="doSocialLogin('dingtalk')"
             />
           </div>
         </el-form-item>
@@ -266,6 +316,11 @@ onMounted(() => {
   </el-form>
 </template>
 <style lang="less" scoped>
+:deep(.anticon) {
+  &:hover {
+    color: var(--el-color-primary) !important;
+  }
+}
 .login-code {
   width: 100%;
   height: 38px;

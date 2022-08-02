@@ -4,6 +4,7 @@ import qs from 'qs'
 import { config } from '@/config/axios/config'
 import { getAccessToken, getRefreshToken, getTenantId } from '@/utils/auth'
 import errorCode from './errorCode'
+import { useI18n } from '@/hooks/web/useI18n'
 
 const tenantEnable = import.meta.env.VITE_APP_TENANT_ENABLE
 const BASE_URL = import.meta.env.VITE_BASE_URL
@@ -18,14 +19,18 @@ const ignoreMsgs = [
 // 是否显示重新登录
 export const isRelogin = { show: false }
 // Axios 无感知刷新令牌，参考 https://www.dashingdog.cn/article/11 与 https://segmentfault.com/a/1190000020210980 实现
+// 请求队列
+// const requestList = []
 // 是否正在刷新中
 let isRefreshToken = false
+
 export const PATH_URL = base_url[import.meta.env.VITE_API_BASEPATH]
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
   baseURL: BASE_URL + BASE_API, // api 的 base_url
-  timeout: config.request_timeout // 请求超时时间
+  timeout: config.request_timeout, // 请求超时时间
+  withCredentials: false // 禁用 Cookie 等信息
 })
 
 // request拦截器
@@ -41,25 +46,27 @@ service.interceptors.request.use(
       const tenantId = getTenantId()
       if (tenantId) (config as Recordable).headers.common['tenant-id'] = tenantId
     }
+    const params = config.params || {}
+    const data = config.data || false
     if (
-      config.method === 'post' &&
+      config.method?.toUpperCase() === 'POST' &&
       config!.headers!['Content-Type'] === 'application/x-www-form-urlencoded'
     ) {
-      config.data = qs.stringify(config.data)
+      config.data = qs.stringify(data)
     }
     // get参数编码
-    if (config.method === 'get' && config.params) {
+    if (config.method?.toUpperCase() === 'GET' && config.params) {
       let url = config.url as string
-      url += '?'
-      const keys = Object.keys(config.params)
-      for (const key of keys) {
-        if (config.params[key] !== void 0 && config.params[key] !== null) {
-          url += `${key}=${encodeURIComponent(config.params[key])}&`
-        }
-      }
       // 给 get 请求加上时间戳参数，避免从缓存中拿数据
       // const now = new Date().getTime()
-      // url = url.substring(0, url.length - 1) + `?_t=${now}`
+      // params = params.substring(0, url.length - 1) + `?_t=${now}`
+      url += '?'
+      const keys = Object.keys(params)
+      for (const key of keys) {
+        if (params[key] !== void 0 && params[key] !== null) {
+          url += `${key}=${encodeURIComponent(params[key])}&`
+        }
+      }
       config.params = {}
       config.url = url
     }
@@ -80,6 +87,7 @@ service.interceptors.response.use(
       // 返回“[HTTP]请求没有返回值”;
       throw new Error()
     }
+    const { t } = useI18n()
     // 未设置状态码则默认成功状态
     const code = data.code || result_code
     // 获取错误信息
@@ -95,13 +103,17 @@ service.interceptors.response.use(
         if (!getRefreshToken()) {
           return handleAuthorized()
         }
+        // 2. 进行刷新访问令牌
+        // TODO: 引入refreshToken会循环依赖报错
       }
     } else if (code === 500) {
-      ElMessage.error(msg)
+      ElMessage.error(t('sys.api.errMsg500'))
       return Promise.reject(new Error(msg))
     } else if (code === 901) {
       ElMessage.error(
-        '<div>演示模式，无法进行写操作</div>' +
+        '<div>' +
+          t('sys.api.errMsg901') +
+          '</div>' +
           '<div> &nbsp; </div>' +
           '<div>参考 https://doc.iocoder.cn/ 教程</div>' +
           '<div> &nbsp; </div>' +
@@ -124,16 +136,26 @@ service.interceptors.response.use(
   },
   (error: AxiosError) => {
     console.log('err' + error) // for debug
-    ElMessage.error(error.message)
+    let { message } = error
+    const { t } = useI18n()
+    if (message === 'Network Error') {
+      message = t('sys.api.errorMessage')
+    } else if (message.includes('timeout')) {
+      message = t('sys.api.apiTimeoutMessage')
+    } else if (message.includes('Request failed with status code')) {
+      message = t('sys.api.apiRequestFailed') + message.substr(message.length - 3)
+    }
+    ElMessage.error(message)
     return Promise.reject(error)
   }
 )
 function handleAuthorized() {
+  const { t } = useI18n()
   if (!isRelogin.show) {
     isRelogin.show = true
-    ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-      confirmButtonText: '重新登录',
-      cancelButtonText: '取消',
+    ElMessageBox.confirm(t('sys.api.timeoutMessage'), t('common.confirmTitle'), {
+      confirmButtonText: t('login.relogin'),
+      cancelButtonText: t('common.cancel'),
       type: 'warning'
     })
       .then(() => {
@@ -143,6 +165,6 @@ function handleAuthorized() {
         isRelogin.show = false
       })
   }
-  return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+  return Promise.reject(t('sys.api.timeoutMessage'))
 }
 export { service }
