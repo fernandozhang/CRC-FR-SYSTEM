@@ -17,15 +17,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="申请时间">
+      <el-form-item label="申请时间" prop="createTime">
         <el-date-picker
-          v-model="dateRangeCreateTime"
+          v-model="queryParams.createTime"
           style="width: 240px"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
         />
       </el-form-item>
       <el-form-item label="报销项目" prop="purchaseObjs">
@@ -101,13 +102,14 @@
         prop="totalHkd"
         width="100"
       />
-      <el-table-column label="当前审批任务" align="center" prop="tasks" :show-overflow-tooltip="true">
+      <el-table-column
+        label="当前审批任务"
+        align="center"
+        prop="tasks"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
-          <el-button
-            v-for="task in scope.row.tasks"
-            :key="task.id"
-            type="text"
-          >
+          <el-button v-for="task in scope.row.tasks" :key="task.id" type="text">
             <span>{{ task.name }}</span>
           </el-button>
         </template>
@@ -160,7 +162,7 @@
             v-hasPermi="['bpm:oa-reim-purchase:create']"
             v-show="scope.row.result === 3"
             >编辑</el-button
-          > 
+          >
           <el-button
             size="mini"
             type="text"
@@ -210,7 +212,7 @@ export default {
       // 请假申请列表
       list: [],
       //审批进度弹出层
-      dateRangeCreateTime: [],
+      // dateRangeCreateTime: [],
       // 查询参数
       queryParams: {
         pageNo: 1,
@@ -218,6 +220,7 @@ export default {
         reimPersonName: null, // 申请报销人姓名
         purchaseObjs: null, // 采购项目
         result: null,
+        createTime: [],
       },
 
       leaveTypeDictData: getDictDatas(DICT_TYPE.BPM_OA_LEAVE_TYPE),
@@ -232,10 +235,10 @@ export default {
     getList() {
       this.loading = true;
       // 处理查询参数
-      let params = { ...this.queryParams };
-      this.addBeginAndEndTime(params, this.dateRangeCreateTime, "createTime");
+      // let params = { ...this.queryParams };
+      // this.addBeginAndEndTime(params, this.dateRangeCreateTime, "createTime");
       // 执行查询
-      getReimPage(params).then((response) => {
+      getReimPage(this.queryParams).then((response) => {
         this.list = response.data.list;
         this.total = response.data.total;
         this.loading = false;
