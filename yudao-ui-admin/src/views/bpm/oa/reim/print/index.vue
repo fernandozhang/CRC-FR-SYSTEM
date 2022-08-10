@@ -7,12 +7,28 @@
       size="small"
       :inline="true"
       v-show="showSearch"
-      label-width="68px"
+      label-width="100px"
     >
-      <el-form-item label="流程名" prop="name">
+      <el-form-item label="打印批次号" prop="batchId">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入流程名"
+          v-model="queryParams.batchId"
+          placeholder="请输入打印批次号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="报销申请人" prop="staffName">
+        <el-input
+          v-model="queryParams.staffName"
+          placeholder="请输入报销申请人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="报销金额" prop="amount">
+        <el-input
+          v-model="queryParams.amount"
+          placeholder="请输入报销报销"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -39,51 +55,52 @@
 
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="任务编号" align="center" prop="id" width="320" />
-      <el-table-column label="任务名称" align="center" prop="name" />
       <el-table-column
-        label="所属流程"
+        label="打印批次号"
         align="center"
-        prop="processInstance.name"
+        prop="id"
+        :min-width="columnWidth"
       />
       <el-table-column
-        label="流程发起人"
+        label="报销申请人"
         align="center"
-        prop="processInstance.startUserNickname"
+        prop="staffName"
+        :min-width="columnWidth"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.staffName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="报销金额（港币）"
+        align="center"
+        prop="amount"
+        :min-width="columnWidth"
       />
       <el-table-column
         label="创建时间"
         align="center"
         prop="createTime"
-        width="180"
+        :min-width="columnWidth"
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center" prop="version" width="80">
-        <template slot-scope="scope">
-          <el-tag type="success" v-if="scope.row.suspensionState === 1"
-            >激活</el-tag
-          >
-          <el-tag type="warning" v-if="scope.row.suspensionState === 2"
-            >挂起</el-tag
-          >
         </template>
       </el-table-column>
       <el-table-column
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
+        :min-width="columnWidth"
       >
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleAudit(scope.row)"
-            v-hasPermi="['bpm:task:update']"
-            >审批</el-button
+            icon="el-icon-document"
+            @click="handleQueryInfo(scope.row)"
+            v-hasPermi="['bpm:reim-print-batch:query']"
+            >详情</el-button
           >
         </template>
       </el-table-column>
@@ -92,19 +109,18 @@
     <pagination
       v-show="total > 0"
       :total="total"
-      :page.sync="queryParams.pageNo"
       :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.pageNo"
       @pagination="getList"
     />
   </div>
 </template>
 
 <script>
-import { getTodoTaskPage } from "@/api/bpm/task";
-import { listSimpleUsers } from "@/api/system/user";
+import { getPrintBatchPage, updateStaffName } from "@/api/bpm/printReimBatch";
 
 export default {
-  name: "待审报销",
+  name: "打印批次",
   components: {},
   data() {
     return {
@@ -114,15 +130,18 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 待办任务列表
+      // 打印批次列表
       list: [],
       // 查询参数
       queryParams: {
         pageNo: 1,
         pageSize: 10,
-        name: null,
+        batchId: null,
         createTime: [],
+        amount: null,
+        staffName: null,
       },
+      columnWidth: "300",
     };
   },
   created() {
@@ -133,7 +152,7 @@ export default {
     getList() {
       this.loading = true;
       // 处理查询参数
-      getTodoTaskPage(this.queryParams).then((response) => {
+      getPrintBatchPage(this.queryParams).then((response) => {
         this.list = response.data.list;
         this.total = response.data.total;
         this.loading = false;
@@ -149,11 +168,11 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    /** 处理审批按钮 */
-    handleAudit(row) {
+    /** 查询详情按钮 */
+    handleQueryInfo(row) {
       this.$router.push({
-        path: "/bpm/process-instance/detail",
-        query: { id: row.processInstance.id },
+        path: "/print/info",
+        query: { id: row.id },
       });
     },
   },

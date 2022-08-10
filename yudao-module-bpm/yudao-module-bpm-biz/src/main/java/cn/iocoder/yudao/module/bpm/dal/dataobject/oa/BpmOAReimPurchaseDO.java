@@ -52,4 +52,5 @@ public class BpmOAReimPurchaseDO extends BaseDO {
      * 关联 AdminUserDO 的 id 属性
      */
     private Long userId;
+    private Long deptId;// 部门编号
 }

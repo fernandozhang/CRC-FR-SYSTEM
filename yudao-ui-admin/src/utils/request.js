@@ -42,6 +42,8 @@ service.interceptors.request.use(config => {
     const tenantId = getTenantId();
     if (tenantId) {
       config.headers['tenant-id'] = tenantId;
+    } else {
+      config.headers['tenant-id'] = process.env.VUE_APP_DEFAULT_TENANT_ID;
     }
   }
   // get请求映射params参数

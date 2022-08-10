@@ -18,10 +18,19 @@ export function getReim(id) {
 }
 
 // 查询采购报销申请分页
-export function getReimPage(query) {
+export function getReimPage(data) {
   return request({
     url: '/bpm/oa/reim/purchase/page',
     method: 'get',
-    params: query
+    params: data
+  })
+}
+
+// 更新采购报销
+export function updateReim(data) {
+  return request({
+    url: '/bpm/oa/reim/purchase/update',
+    method: 'post',
+    data: data
   })
 }

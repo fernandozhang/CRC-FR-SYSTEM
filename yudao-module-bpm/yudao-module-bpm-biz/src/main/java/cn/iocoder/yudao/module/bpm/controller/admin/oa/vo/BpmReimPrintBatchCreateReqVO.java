@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.bpm.controller.admin.oa.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
@@ -17,6 +19,8 @@ import java.util.List;
 @ApiModel("管理后台 - 报销打印批次创建 Request VO")
 @Data
 @ToString(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class BpmReimPrintBatchCreateReqVO {
     @ApiModelProperty(value = "总金额", required = true)
     @NotNull(message = "总金额不能为空")

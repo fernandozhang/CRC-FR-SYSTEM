@@ -2,10 +2,8 @@ package cn.iocoder.yudao.module.bpm.controller.admin.oa;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageRespVO;
-import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseCreateReqVO;
-import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageReqVO;
-import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseRespVO;
+import cn.iocoder.yudao.framework.datapermission.core.annotation.DataPermission;
+import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.*;
 import cn.iocoder.yudao.module.bpm.convert.oa.BpmOAReimPurchaseConvert;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmOAReimPurchaseDO;
 import cn.iocoder.yudao.module.bpm.service.oa.BpmOAReimPurchaseService;
@@ -36,6 +34,7 @@ import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUti
 @RestController
 @RequestMapping("/bpm/oa/reim/purchase")
 @Validated
+@DataPermission
 public class BpmOAReimPurchaseController {
 
     @Resource
@@ -65,5 +64,11 @@ public class BpmOAReimPurchaseController {
         return success(pageResult);
     }
 
+    @PostMapping("/update")
+    @PreAuthorize("@ss.hasPermission('bpm:oa-reim-purchase:update')")
+    @ApiOperation("修改采购报销申请")
+    public void updatePurchase(@Valid @RequestBody BpmOAReimPurchaseUpdateReqVO reqVO) {
+        purchaseService.updatePurchase(reqVO);
+    }
 
 }

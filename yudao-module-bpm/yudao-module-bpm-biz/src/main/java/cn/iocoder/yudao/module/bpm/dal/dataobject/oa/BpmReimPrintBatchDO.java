@@ -25,4 +25,5 @@ public class BpmReimPrintBatchDO extends BaseDO {
     private String staffName;// 报销员工姓名
     private Integer reimType;// 报销类型（1：采购）
     private Long tenantId;// 租户编号
+    private Long deptId;// 部门编号
 }

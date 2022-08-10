@@ -470,19 +470,28 @@ public class AdminUserServiceImpl implements AdminUserService {
         checkTenantExists(reqVO.getTenantId());
         // 校验正确性
         checkCreateOrUpdate(null, reqVO.getUsername(), null, reqVO.getEmail(),
-                null, null);
+                reqVO.getDeptId(), null);
         // 插入用户
         AdminUserDO user = UserConvert.INSTANCE.convert(reqVO);
         user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
         user.setPassword(passwordEncoder.encode(reqVO.getPassword())); // 加密密码
         user.setTenantId(reqVO.getTenantId());// 租户编号
+        user.setNickname(user.getUsername());// 昵称
+        user.setCreator("120");// 创建人默认为管理员
+
         userMapper.insert(user);
         // 插入关联岗位
         if (CollectionUtil.isNotEmpty(user.getPostIds())) {
             userPostMapper.insertBatch(convertList(user.getPostIds(),
                     postId -> new UserPostDO().setUserId(user.getId()).setPostId(postId)));
         }
-        return user.getId();
+        // 插入用户默认角色
+        Long userId = user.getId();
+        Set<Long> roleSet = new HashSet<>();// 默认角色，成员
+        roleSet.add(129L);
+        permissionService.assignUserRole(userId, roleSet);
+
+        return userId;
     }
 
     /**

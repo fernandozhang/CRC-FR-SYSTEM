@@ -27,8 +27,7 @@ public class BpmOAReimPurchaseBaseVO {
     @ApiModelProperty(value = "购物报销表单主键", required = false)
     private Long id;
 
-    @ApiModelProperty(value = "报销申请人员姓名", required = true)
-    @NotEmpty(message = "报销申请人姓名不能为空")
+    @ApiModelProperty(value = "报销申请人员姓名", required = false)
     private String reimPersonName;
 
     @ApiModelProperty(value = "是否有纸质收据", required = true)

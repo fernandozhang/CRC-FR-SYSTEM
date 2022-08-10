@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                 registry.antMatchers(buildAdminApi("/system/oauth2/check-token")).permitAll();
                 // 注册接口
                 registry.antMatchers(buildAdminApi("/system/user/register")).permitAll();
+                // 查询精简部门信息接口
+                registry.antMatchers(buildAdminApi("/system/dept/list-all-simple")).permitAll();
             }
 
         };

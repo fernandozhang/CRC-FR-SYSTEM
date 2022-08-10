@@ -160,7 +160,7 @@ import {
 import { makeUpJs } from '@/components/generator/js'
 import { makeUpCss } from '@/components/generator/css'
 import drawingDefalut from '@/components/generator/drawingDefalut'
-import logo from '@/assets/logo/logo.png'
+import logo from '@/assets/logo/logo-crc.png'
 import CodeTypeDialog from '@/views/infra/build/CodeTypeDialog'
 import DraggableItem from '@/views/infra/build/DraggableItem'
 import {

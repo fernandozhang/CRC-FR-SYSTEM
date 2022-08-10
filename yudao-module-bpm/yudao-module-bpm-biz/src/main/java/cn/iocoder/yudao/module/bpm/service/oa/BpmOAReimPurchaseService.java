@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseCreateReqVO;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageReqVO;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageRespVO;
+import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseUpdateReqVO;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmOAReimPurchaseDO;
 
 import javax.validation.Valid;
@@ -46,11 +47,18 @@ public interface BpmOAReimPurchaseService {
     BpmOAReimPurchaseDO getReim(Long id);
 
     /**
-     * 获得请假申请分页
+     * 获得采购报销申请分页
      *
      * @param userId    用户编号
      * @param pageReqVO 分页查询
-     * @return 请假申请分页
+     * @return 采购报销申请分页
      */
     PageResult<BpmOAReimPurchasePageRespVO> getReimPage(Long userId, BpmOAReimPurchasePageReqVO pageReqVO);
+
+    /**
+     * 修改采购报销信息
+     *
+     * @param reqVO
+     */
+    void updatePurchase(BpmOAReimPurchaseUpdateReqVO reqVO);
 }

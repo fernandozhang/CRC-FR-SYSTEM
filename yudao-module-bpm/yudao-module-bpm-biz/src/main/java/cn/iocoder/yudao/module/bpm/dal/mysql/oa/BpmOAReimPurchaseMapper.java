@@ -19,13 +19,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface BpmOAReimPurchaseMapper extends BaseMapperX<BpmOAReimPurchaseDO> {
-    default PageResult<BpmOAReimPurchaseDO> selectPage(Long userId, BpmOAReimPurchasePageReqVO reqVO) {
+    default PageResult<BpmOAReimPurchaseDO> selectPage(BpmOAReimPurchasePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<BpmOAReimPurchaseDO>()
-                .eqIfPresent(BpmOAReimPurchaseDO::getUserId, userId)
                 .eqIfPresent(BpmOAReimPurchaseDO::getResult, reqVO.getResult())
                 .likeIfPresent(BpmOAReimPurchaseDO::getReimPersonName, reqVO.getReimPersonName())
                 .likeIfPresent(BpmOAReimPurchaseDO::getPurchaseObjs, reqVO.getPurchaseObjs())
-                .betweenIfPresent(BpmOAReimPurchaseDO::getCreateTime, reqVO.getBeginCreateTime(), reqVO.getEndCreateTime())
+                .betweenIfPresent(BpmOAReimPurchaseDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(BpmOAReimPurchaseDO::getId));
     }
 }

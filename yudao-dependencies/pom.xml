@@ -65,6 +65,10 @@
         <yunpian-java-sdk.version>1.2.7</yunpian-java-sdk.version>
         <justauth.version>1.4.0</justauth.version>
         <jimureport.version>1.5.2</jimureport.version>
+        <!--    PDF工具    -->
+        <itextpdf.version>5.5.13.3</itextpdf.version>
+        <itextpdf-itext-asian.version>5.2.0</itextpdf-itext-asian.version>
+        <itextpdf-tool-xmlworker>5.5.13.3</itextpdf-tool-xmlworker>
     </properties>
 
     <dependencyManagement>
@@ -294,16 +298,16 @@
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-opentracing</artifactId>
                 <version>${skywalking.version}</version>
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>opentracing-api</artifactId>-->
-<!--                        <groupId>io.opentracing</groupId>-->
-<!--                    </exclusion>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>opentracing-util</artifactId>-->
-<!--                        <groupId>io.opentracing</groupId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <artifactId>opentracing-api</artifactId>-->
+                <!--                        <groupId>io.opentracing</groupId>-->
+                <!--                    </exclusion>-->
+                <!--                    <exclusion>-->
+                <!--                        <artifactId>opentracing-util</artifactId>-->
+                <!--                        <groupId>io.opentracing</groupId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
             <dependency>
                 <groupId>io.opentracing</groupId>
@@ -564,6 +568,25 @@
                 <groupId>org.jeecgframework.jimureport</groupId>
                 <artifactId>jimureport-spring-boot-starter</artifactId>
                 <version>${jimureport.version}</version>
+            </dependency>
+
+            <!--     PDF工具       -->
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itextpdf</artifactId>
+                <version>${itextpdf.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-asian</artifactId>
+                <version>${itextpdf-itext-asian.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf.tool</groupId>
+                <artifactId>xmlworker</artifactId>
+                <version>${itextpdf-tool-xmlworker}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

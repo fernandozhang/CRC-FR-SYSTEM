@@ -17,15 +17,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建时间">
+      <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
-          v-model="dateRangeCreateTime"
+          v-model="queryParams.createTime"
           style="width: 240px"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
         />
       </el-form-item>
       <el-form-item>
@@ -141,7 +142,7 @@ import { getDoneTaskPage } from "@/api/bpm/task";
 import { getDate } from "@/utils/dateUtils";
 
 export default {
-  name: "Done",
+  name: "已审报销",
   components: {},
   data() {
     return {
@@ -154,11 +155,11 @@ export default {
       // 已办任务列表
       list: [],
       // 查询参数
-      dateRangeCreateTime: [],
       queryParams: {
         pageNo: 1,
         pageSize: 10,
         name: null,
+        createTime: [],
       },
     };
   },
@@ -169,10 +170,7 @@ export default {
     /** 查询列表 */
     getList() {
       this.loading = true;
-      // 处理查询参数
-      let params = { ...this.queryParams };
-      this.addBeginAndEndTime(params, this.dateRangeCreateTime, "createTime");
-      getDoneTaskPage(params).then((response) => {
+      getDoneTaskPage(this.queryParams).then((response) => {
         this.list = response.data.list;
         this.total = response.data.total;
         this.loading = false;
@@ -185,7 +183,6 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRangeCreateTime = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },

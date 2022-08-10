@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseCreateReqVO;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageRespVO;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseRespVO;
+import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseUpdateReqVO;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmOAReimPurchaseDO;
 import org.flowable.task.api.Task;
 import org.mapstruct.Mapper;
@@ -39,4 +40,6 @@ public interface BpmOAReimPurchaseConvert {
     List<BpmOAReimPurchasePageRespVO> convertList(List<BpmOAReimPurchaseDO> list);
 
     List<BpmOAReimPurchasePageRespVO.Task> convertList2(List<Task> tasks);
+
+    BpmOAReimPurchaseDO convert(BpmOAReimPurchaseUpdateReqVO bean);
 }

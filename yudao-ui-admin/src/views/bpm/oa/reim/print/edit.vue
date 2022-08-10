@@ -8,16 +8,6 @@
       label-width="10vw"
       label-position="left"
     >
-      <!-- <el-form-item label="申请人" prop="reimPersonName">
-        <el-col :span="10">
-          <el-input
-            :rows="3"
-            v-model="form.reimPersonName"
-            placeholder="请输入姓名"
-            :disabled="true"
-          />
-        </el-col>
-      </el-form-item> -->
       <el-form-item label="是否有纸质收据" prop="paperReceipt">
         <el-radio-group
           v-model="form.paperReceipt"
@@ -100,9 +90,6 @@
         </el-col>
       </el-form-item>
       <el-form-item prop="exchangeRate">
-        <!-- v-show="
-          form.totalUnit != undefined && form.totalUnit != currencyTypeHKD
-        " -->
         <span slot="label">
           <el-tooltip
             content="汇率数据是根据付款日期和货币种类，查询网址 https://tw.exchange-rates.org "
@@ -169,20 +156,21 @@
 </template>
 
 <script>
-import { createReim, getReim } from "@/api/bpm/purchase";
+import { updateReim, getReim } from "@/api/bpm/purchase";
 import { getDictDatas, DICT_TYPE } from "@/utils/dict";
 import ImageUpload from "@/components/ImageUpload";
 import { getExchangeRate } from "@/utils/exchangeRate";
 import { parseTime } from "@/utils/ruoyi";
 
 export default {
-  name: "PurchaseCreate",
+  name: "PrintBatchEdit",
   components: { ImageUpload },
   data() {
     return {
       // 表单参数
       form: {
-        // reimPersonName: undefined, // 报销申请人员姓名
+        id: undefined,
+        reimPersonName: undefined, // 报销申请人员姓名
         paperReceipt: undefined, // 是否有纸质收据
         payDate: undefined, // 付款日期
         purchaseObjs: undefined, // 采购项目
@@ -261,23 +249,14 @@ export default {
         if (!valid) {
           return;
         }
-
+        this.form.id = this.id;
         // 添加的提交
-        createReim(this.form).then((response) => {
+        updateReim(this.form).then((response) => {
           this.$modal.msgSuccess("发起成功");
-          this.$modal
-            .confirm("发起成功，继续创建报销单？", "提示")
-            .then(() => {
-              // ...
-              this.$tab.closeOpenPage({ path: "/purchase/index" });
-            })
-            .then(() => {
-              // ...
-              this.$tab.openPage("发起采购报销", "/purchase/create");
-            })
-            .catch(() => {
-              this.$tab.closeOpenPage({ path: "/purchase/index" });
-            });
+          this.$tab.closeOpenPage({
+            path: "/print/info",
+            query: { id: this.$route.query.batchId },
+          });
         });
       });
     },

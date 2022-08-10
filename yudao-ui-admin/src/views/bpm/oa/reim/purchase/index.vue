@@ -71,7 +71,45 @@
           size="mini"
           v-hasPermi="['bpm:oa-reim-purchase:create']"
           @click="handleAdd"
+          v-show="printMode === false"
           >发起报销</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-printer"
+          size="mini"
+          v-hasPermi="['bpm:reim-print-batch:create']"
+          @click="handleSelectPrint"
+          v-show="showPrintBtn === true && printMode === false"
+          >打印</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-back"
+          size="mini"
+          v-hasPermi="['bpm:reim-print-batch:create']"
+          @click="handleCancelPrint"
+          v-show="printMode === true"
+          >返回</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-printer"
+          size="mini"
+          v-hasPermi="['bpm:reim-print-batch:create']"
+          @click="handlePrint"
+          v-show="printMode === true"
+          :disabled="multipleSelection.length === 0"
+          >确认</el-button
         >
       </el-col>
       <right-toolbar
@@ -81,31 +119,44 @@
     </el-row>
 
     <!-- 列表 -->
-    <el-table v-loading="loading" :data="list">
+    <el-table
+      v-loading="loading"
+      :data="list"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="55" v-if="printMode === true">
+      </el-table-column>
       <el-table-column
         label="任务编号"
         align="center"
         prop="processInstanceId"
-        width="320"
+        :min-width="columnWidth"
         fixed
+      />
+      <el-table-column
+        label="申请人"
+        align="center"
+        prop="reimPersonName"
+        :min-width="columnWidth"
       />
       <el-table-column
         label="报销项目"
         align="center"
         prop="purchaseObjs"
-        width="180"
+        :min-width="columnWidth"
         :show-overflow-tooltip="true"
       />
       <el-table-column
         label="总价（港币）"
         align="center"
         prop="totalHkd"
-        width="100"
+        :min-width="columnWidth"
       />
       <el-table-column
         label="当前审批任务"
         align="center"
         prop="tasks"
+        :min-width="columnWidth"
         :show-overflow-tooltip="true"
       >
         <template slot-scope="scope">
@@ -126,34 +177,19 @@
         label="申请时间"
         align="center"
         prop="createTime"
-        width="180"
+        :min-width="columnWidth"
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="申请人"
-        align="center"
-        prop="reimPersonName"
-        width="100"
-      />
-      <el-table-column
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
-        width="200"
+        :min-width="columnWidth"
       >
         <template slot-scope="scope">
-          <!-- <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleCancel(scope.row)"
-            v-hasPermi="['bpm:oa-reim-purchase:create']"
-            v-show="scope.row.result === 1"
-            >取消报销</el-button
-          > -->
           <el-button
             size="mini"
             type="text"
@@ -188,15 +224,14 @@
       :total="total"
       :page.sync="queryParams.pageNo"
       :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+      @pagination="getList()"
     />
   </div>
 </template>
 
 <script>
 import { getReimPage } from "@/api/bpm/purchase";
-import { getDictDatas, DICT_TYPE } from "@/utils/dict";
-import { cancelProcessInstance } from "@/api/bpm/processInstance";
+import { createPrintReimBatch } from "@/api/bpm/printReimBatch";
 
 export default {
   name: "采购报销",
@@ -212,7 +247,6 @@ export default {
       // 请假申请列表
       list: [],
       //审批进度弹出层
-      // dateRangeCreateTime: [],
       // 查询参数
       queryParams: {
         pageNo: 1,
@@ -222,9 +256,12 @@ export default {
         result: null,
         createTime: [],
       },
-
-      leaveTypeDictData: getDictDatas(DICT_TYPE.BPM_OA_LEAVE_TYPE),
-      leaveResultData: getDictDatas(DICT_TYPE.BPM_PROCESS_INSTANCE_RESULT),
+      PROCESS_RESULT_SUCCESS: 2,
+      showPrintBtn: false, // 显示打印按钮
+      printMode: false, // 打印模式
+      multipleSelection: [], // 选择列表
+      PRINT_REIM_TYPE_PURCHASE: 1, // 打印信息类型：采购
+      columnWidth: "300",
     };
   },
   created() {
@@ -232,13 +269,10 @@ export default {
   },
   methods: {
     /** 查询列表 */
-    getList() {
+    getList(params) {
       this.loading = true;
-      // 处理查询参数
-      // let params = { ...this.queryParams };
-      // this.addBeginAndEndTime(params, this.dateRangeCreateTime, "createTime");
       // 执行查询
-      getReimPage(this.queryParams).then((response) => {
+      getReimPage(params ? params : this.queryParams).then((response) => {
         this.list = response.data.list;
         this.total = response.data.total;
         this.loading = false;
@@ -257,12 +291,12 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.$router.push({ path: "/reim/purchase/create" });
+      this.$router.push({ path: "/purchase/create" });
     },
     /** 详情按钮操作 */
     handleDetail(row) {
       this.$router.push({
-        path: "/reim/purchase/detail",
+        path: "/purchase/detail",
         query: { id: row.id },
       });
     },
@@ -273,29 +307,81 @@ export default {
         query: { id: row.processInstanceId },
       });
     },
-    /** 取消请假 */
-    handleCancel(row) {
-      const id = row.processInstanceId;
-      this.$prompt("请输入取消原因？", "取消流程", {
+    /** 详情按钮操作 */
+    handleEdit(row) {
+      this.$router.push({
+        path: "/purchase/create",
+        query: { id: row.id },
+      });
+    },
+    /** 进入选择打印状态 */
+    handleSelectPrint() {
+      this.printMode = true;
+      this.loading = true;
+      // 查询已通过记录
+      this.queryParams.result = this.PROCESS_RESULT_SUCCESS;
+      // 执行查询
+      this.getList(this.queryParams);
+    },
+    /**退出打印状态 */
+    handleCancelPrint() {
+      this.printMode = false;
+      // 查询记录
+      this.queryParams.result = null;
+      this.getList(this.queryParams);
+    },
+    /**打印报销单 */
+    handlePrint() {
+      // 总金额
+      let amount = 0;
+      // 关联编号数组
+      let relateIds = [];
+      this.multipleSelection.forEach((element) => {
+        relateIds.push(element.id);
+        amount += element.totalHkd;
+      });
+      if (amount >= process.env.VUE_APP_REIMBURSEMENT_PURCHASE_AMOUNT_MAX) {
+        this.$modal.alertError("报销金额超过HK$10000，请检查");
+        return;
+      }
+      this.$prompt("请输入员工姓名，报销费用会结算给该员工：", "填写员工姓名", {
         type: "warning",
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/, // 判断非空，且非空格
-        inputErrorMessage: "取消原因不能为空",
+        inputErrorMessage: "报销申请人不能为空",
       })
         .then(({ value }) => {
-          return cancelProcessInstance(id, value);
+          let data = {
+            amount,
+            staffName: value,
+            reimType: this.PRINT_REIM_TYPE_PURCHASE,
+            relateIds,
+          };
+          // console.log(data);
+          createPrintReimBatch(data).then((resp) => {
+            // 下载报销PDF
+            window.open(resp.data);
+          });
         })
         .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("取消成功");
+          this.handleCancelPrint();
+          this.$modal.msgSuccess("打印成功");
         });
     },
-    /** 详情按钮操作 */
-    handleEdit(row) {
-      this.$router.push({
-        path: "/reim/purchase/create",
-        query: { id: row.id },
+    /**选择列表事件 */
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+  },
+  watch: {
+    list(value) {
+      // 存在审批通过的记录，可以打印
+      value.forEach((puchase) => {
+        if (puchase.result === this.PROCESS_RESULT_SUCCESS) {
+          this.showPrintBtn = true;
+          return;
+        }
       });
     },
   },
