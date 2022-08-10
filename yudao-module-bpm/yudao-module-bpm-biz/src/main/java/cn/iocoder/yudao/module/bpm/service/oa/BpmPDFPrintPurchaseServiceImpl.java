@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.List;
@@ -197,15 +196,15 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                     Image payImage = Image.getInstance(new URL(purchaseDO.getPayImg()));
                     picTable.addCell(PDFUtil.createCell(payImage, Element.ALIGN_CENTER, 4, 1));
 
-                    // obj image
-                    if (purchaseDO.getObjsImg() != null) {
-                        picTable.addCell(PDFUtil.createCell("物品图片： \n" + purchaseDO.getPurchaseObjs(), PDFUtil.font, Element.ALIGN_CENTER));
-                        Image objImage = Image.getInstance(new URL(purchaseDO.getObjsImg()));
-                        picTable.addCell(PDFUtil.createCell(objImage, Element.ALIGN_CENTER, 4, 1));
-                    }
                 } else {
                     picTable.addCell(PDFUtil.createCell("收据： \n ", PDFUtil.font, Element.ALIGN_CENTER));
                     picTable.addCell(PDFUtil.createCell("此处粘贴收据", PDFUtil.font, Element.ALIGN_CENTER, 4));
+                }
+                // obj image
+                if (purchaseDO.getObjsImg() != null) {
+                    picTable.addCell(PDFUtil.createCell("物品图片： \n", PDFUtil.font, Element.ALIGN_CENTER));
+                    Image objImage = Image.getInstance(new URL(purchaseDO.getObjsImg()));
+                    picTable.addCell(PDFUtil.createCell(objImage, Element.ALIGN_CENTER, 4, 1));
                 }
 
                 document.add(picTable);

@@ -1,5 +1,28 @@
 <template>
   <div class="app-container">
+    <el-row type="flex" justify="start" align="middle">
+      <el-col :span="16">
+        <el-steps :active="7" style="margin-top: 15px; margin-bottom: 20px">
+          <el-step title="填写、提交报销单"></el-step>
+          <el-step title="部门负责人审批"></el-step>
+          <el-step title="财务人员审批"></el-step>
+          <el-step title="打印报销单"></el-step>
+          <el-step
+            title="粘贴收据"
+            description="没有收据需填写遗失收据声明"
+          ></el-step>
+          <el-step title="寄送文件到中心" description="">
+            <template v-slot:description>
+              <span>地址：中国香港，沙田区，科学园三期17W，808-815室</span
+              ><br />
+              <span>收件人：Kathy Mak</span><br />
+              <span>联系电话：xxxxxxxx</span>
+            </template>
+          </el-step>
+          <el-step title="出纳"></el-step>
+        </el-steps>
+      </el-col>
+    </el-row>
     <!-- 搜索工作栏 -->
     <el-form
       :model="queryParams"
@@ -83,7 +106,8 @@
           size="mini"
           v-hasPermi="['bpm:reim-print-batch:create']"
           @click="handleSelectPrint"
-          v-show="showPrintBtn === true && printMode === false"
+          :disabled="!(showPrintBtn === true && printMode === false)"
+          v-show="printMode === false"
           >打印</el-button
         >
       </el-col>
@@ -127,6 +151,20 @@
       <el-table-column type="selection" width="55" v-if="printMode === true">
       </el-table-column>
       <el-table-column
+        label="是否已打印"
+        align="center"
+        prop="isPrinted"
+        :min-width="columnWidth"
+        v-if="printMode === true"
+      >
+        <template slot-scope="scope">
+          <dict-tag
+            :type="DICT_TYPE.REIM_APPLICATION_IS_PRINTED"
+            :value="scope.row.isPrinted"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
         label="任务编号"
         align="center"
         prop="processInstanceId"
@@ -165,7 +203,12 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="结果" align="center" prop="result" width="100">
+      <el-table-column
+        label="结果"
+        align="center"
+        prop="result"
+        min-width="100"
+      >
         <template slot-scope="scope">
           <dict-tag
             :type="DICT_TYPE.BPM_PROCESS_INSTANCE_RESULT"
@@ -261,7 +304,7 @@ export default {
       printMode: false, // 打印模式
       multipleSelection: [], // 选择列表
       PRINT_REIM_TYPE_PURCHASE: 1, // 打印信息类型：采购
-      columnWidth: "300",
+      columnWidth: "200",
     };
   },
   created() {

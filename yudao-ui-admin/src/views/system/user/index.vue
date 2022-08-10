@@ -329,7 +329,7 @@ export default {
           { required: true, message: "用户名称不能为空", trigger: "blur" }
         ],
         deptId: [
-          { required: false, message: "所属部门不能为空", trigger: "change" }
+          { required: true, message: "所属部门不能为空", trigger: "change" }
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" }

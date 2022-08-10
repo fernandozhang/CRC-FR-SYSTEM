@@ -1,6 +1,8 @@
 <template>
   <div class="dashboard-editor-container">
 
+    <el-alert title="首页数据纯属虚构，如有雷同必是巧合 😄" type="success" show-icon></el-alert>
+
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">

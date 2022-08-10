@@ -23,7 +23,7 @@
           <div>
             <el-form ref="loginForm" :model="loginForm" :rules="LoginRules" class="login-form">
               <el-form-item prop="tenantName" v-if="tenantEnable">
-                <el-input v-model="loginForm.tenantName" type="text" auto-complete="off" placeholder='租户' :disabled="false">
+                <el-input v-model="loginForm.tenantName" type="text" auto-complete="off" placeholder='租户' :disabled="true">
                   <svg-icon slot="prefix" icon-class="tree" class="el-input__icon input-icon"/>
                 </el-input>
               </el-form-item>

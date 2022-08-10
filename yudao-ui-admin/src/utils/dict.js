@@ -60,6 +60,7 @@ export const DICT_TYPE = {
   // ========== 报销流程 ===========
   REIM_PURCHASE_WAY_TYPE: 'reim_purchase_way_type', // 采购物品途径
   REIM_PURCHASE_CURRENCY_TYPE: 'reim_purchase_currency_type', // 采购物品货币种类
+  REIM_APPLICATION_IS_PRINTED: 'reim_application_is_printed', // 报销申请是否打印
 }
 
 /**

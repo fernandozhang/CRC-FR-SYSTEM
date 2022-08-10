@@ -49,6 +49,7 @@ public class BpmOAReimPurchasePageRespVO {
     /**
      * 当前任务
      */
+    @ApiModelProperty(value = "当前任务", required = true)
     private List<BpmOAReimPurchasePageRespVO.Task> tasks;
 
     @ApiModel("流程任务")
@@ -62,4 +63,7 @@ public class BpmOAReimPurchasePageRespVO {
         private String name;
 
     }
+
+    @ApiModelProperty(value = "是否已打印（0 未打印，1已打印）", required = true, example = "1")
+    private int isPrinted;
 }

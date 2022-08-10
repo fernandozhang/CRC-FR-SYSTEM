@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.bpm.service.oa;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.bpm.api.task.BpmProcessInstanceApi;
 import cn.iocoder.yudao.module.bpm.api.task.dto.BpmProcessInstanceCreateReqDTO;
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseCreateReqVO;
@@ -10,7 +11,9 @@ import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchasePageR
 import cn.iocoder.yudao.module.bpm.controller.admin.oa.vo.BpmOAReimPurchaseUpdateReqVO;
 import cn.iocoder.yudao.module.bpm.convert.oa.BpmOAReimPurchaseConvert;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmOAReimPurchaseDO;
+import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmReimPrintBatchRelateIdDO;
 import cn.iocoder.yudao.module.bpm.dal.mysql.oa.BpmOAReimPurchaseMapper;
+import cn.iocoder.yudao.module.bpm.dal.mysql.oa.BpmReimPrintBatchRelateIdMapper;
 import cn.iocoder.yudao.module.bpm.enums.task.BpmProcessInstanceResultEnum;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
@@ -55,6 +58,9 @@ public class BpmOAReimPurchaseServiceImpl implements BpmOAReimPurchaseService {
 
     @Resource
     private AdminUserApi userApi;
+
+    @Resource
+    private BpmReimPrintBatchRelateIdMapper batchRelateIdMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -105,7 +111,21 @@ public class BpmOAReimPurchaseServiceImpl implements BpmOAReimPurchaseService {
         List<String> processInstanceIds = convertList(pageResult.getList(), BpmOAReimPurchaseDO::getProcessInstanceId);
         Map<String, List<Task>> taskMap = bpmProcessInstanceApi.getTaskMapByProcessInstanceIds(processInstanceIds);
         // 转换返回
-        return BpmOAReimPurchaseConvert.INSTANCE.convertPage(pageResult, taskMap);
+        PageResult<BpmOAReimPurchasePageRespVO> resultList = BpmOAReimPurchaseConvert.INSTANCE.convertPage(pageResult, taskMap);
+
+        // 整理打印信息
+        List<BpmOAReimPurchasePageRespVO> respVOList = resultList.getList();
+
+        for (BpmOAReimPurchasePageRespVO pageRespVO : respVOList) {
+            List<BpmReimPrintBatchRelateIdDO> batchRelateIdDOList = batchRelateIdMapper.selectList(new LambdaQueryWrapperX<BpmReimPrintBatchRelateIdDO>()
+                    .eqIfPresent(BpmReimPrintBatchRelateIdDO::getRelateId, pageRespVO.getId()));
+            if (CollUtil.isEmpty(batchRelateIdDOList)) {
+                pageRespVO.setIsPrinted(0);
+            } else {
+                pageRespVO.setIsPrinted(1);
+            }
+        }
+        return resultList;
     }
 
     @Override
