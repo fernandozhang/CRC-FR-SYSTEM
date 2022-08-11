@@ -270,16 +270,25 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
         }
 
         try {
-            // 合并字节数组
+            // 合并PDF
             byte[] formBytes = formBos.toByteArray();
             byte[] templateBytes = templateBos.toByteArray();
-            byte[] content = new byte[formBytes.length + templateBytes.length];
-            System.arraycopy(formBytes, 0, content, 0, formBytes.length);
-            System.arraycopy(templateBytes, 0, content, formBytes.length, templateBytes.length);
-
+            String formUrl = "";// 报销信息文件url
+            String templateUrl = "";// 模板文件url
             // 存入文件服务器
-            String fileUrl = fileApi.createFile(docName + ".pdf", content);
-            return fileUrl;
+            if (formBytes.length > 0) {
+                formUrl = fileApi.createFile(docName + "_form.pdf", formBytes);
+            }
+            if (templateBytes.length > 0) {
+                // 上传模板，然后合并
+                templateUrl = fileApi.createFile(docName + "_template.pdf", templateBytes);
+                byte[] content = mergePDF(new URL[]{new URL(formUrl), new URL(templateUrl)});
+                String fileUrl = fileApi.createFile(docName + ".pdf", content);
+                return fileUrl;
+            } else {
+                // 没有模板文件
+                return formUrl;
+            }
         } catch (Throwable e) {
             logger.error("返回数据流异常", e);
             throw exception(PRINT_PURCHASE_PDF_EXCEPTION);
@@ -319,4 +328,43 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
         }
         return false;
     }
+
+    /**
+     * @param files 源PDF路径
+     * @author Reverse_XML
+     * 将多个PDF合并成一个PDF
+     */
+    private byte[] mergePDF(URL[] files) {
+        Document document = null;
+        PdfCopy copy = null;
+        PdfReader reader = null;
+        // 合并结果
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            // 文档
+            document = new Document(new PdfReader(files[0]).getPageSize(1));
+            copy = new PdfCopy(document, bos);
+            document.open();
+            for (int i = 0; i < files.length; i++) {
+                reader = new PdfReader(files[i]);
+                int numberOfPages = reader.getNumberOfPages();
+                for (int j = 1; j <= numberOfPages; j++) {
+                    document.newPage();
+                    PdfImportedPage page = copy.getImportedPage(reader, j);
+                    copy.addPage(page);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("合并PDF出现异常，", e);
+        } finally {
+            if (document != null)
+                document.close();
+            if (reader != null)
+                reader.close();
+            if (copy != null)
+                copy.close();
+            return bos.toByteArray();
+        }
+    }
+
 }

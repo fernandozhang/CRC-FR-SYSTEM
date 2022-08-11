@@ -142,4 +142,7 @@ public interface ErrorCodeConstants {
     ErrorCode OAUTH2_CODE_NOT_EXISTS = new ErrorCode(1002022000, "code 不存在");
     ErrorCode OAUTH2_CODE_EXPIRE = new ErrorCode(1002022000, "code 已过期");
 
+    // ========== 邮件工具 1002023000 =========
+    ErrorCode EMAIL_MAILBOX_NOT_EXISTS = new ErrorCode(1002023000, "Mailbox不存在");
+    ErrorCode EMAIL_TEMPLATE_NOT_EXISTS = new ErrorCode(1002023001, "邮件模板不存在");
 }

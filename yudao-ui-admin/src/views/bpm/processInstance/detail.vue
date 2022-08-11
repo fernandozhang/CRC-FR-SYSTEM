@@ -151,7 +151,7 @@ export default {
       runningTasks: [],
       auditForms: [],
       auditRule: {
-        reason: [{ required: true, message: "审批建议不能为空", trigger: "blur" }],
+        reason: [{ required: false, message: "审批建议不能为空", trigger: "blur" }],
       },
 
       // 转派审批人

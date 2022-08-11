@@ -2,21 +2,32 @@
   <div class="app-container">
     <el-row type="flex" justify="start" align="middle">
       <el-col :span="16">
-        <el-steps :active="7" style="margin-top: 15px; margin-bottom: 20px">
-          <el-step title="填写、提交报销单"></el-step>
-          <el-step title="部门负责人审批"></el-step>
-          <el-step title="财务人员审批"></el-step>
-          <el-step title="打印报销单"></el-step>
+        <el-steps
+          :active="7"
+          style="margin-top: 15px; margin-bottom: 20px"
+          simple
+        >
+          <el-step title="发起报销" description="填写、提交报销单"></el-step>
           <el-step
-            title="粘贴收据"
-            description="没有收据需填写遗失收据声明"
+            title="上级审批"
+            description="团队或部门负责人审批"
           ></el-step>
-          <el-step title="寄送文件到中心" description="">
+          <el-step title="财务审批" description="财务部人员审批"></el-step>
+          <el-step
+            title="打印报销单"
+            description="全部审批通过，点击“打印”按钮，选择需要打印的报销单"
+          ></el-step>
+          <el-step
+            title="贴票"
+            description="粘贴收据，没有收据需填写遗失收据声明"
+          ></el-step>
+          <el-step title="邮寄文件" description="">
             <template v-slot:description>
               <span>地址：中国香港，沙田区，科学园三期17W，808-815室</span
               ><br />
-              <span>收件人：Kathy Mak</span><br />
-              <span>联系电话：xxxxxxxx</span>
+              <span>收件人：{{ recipientName }}</span
+              ><br />
+              <span>联系电话：{{ recipientPhone }}</span>
             </template>
           </el-step>
           <el-step title="出纳"></el-step>
@@ -88,7 +99,7 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="success"
           plain
           icon="el-icon-plus"
           size="mini"
@@ -164,13 +175,47 @@
           />
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="任务编号"
         align="center"
         prop="processInstanceId"
         :min-width="columnWidth"
         fixed
-      />
+      /> -->
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+        :min-width="columnWidth"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleEdit(scope.row)"
+            v-hasPermi="['bpm:oa-reim-purchase:create']"
+            v-show="scope.row.result === 3"
+            >编辑</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-tickets"
+            @click="handleDetail(scope.row)"
+            v-hasPermi="['bpm:oa-reim-purchase:query']"
+            >详情</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleProcessDetail(scope.row)"
+            v-hasPermi="['bpm:process-instance:query']"
+            >审批进度</el-button
+          >
+        </template>
+      </el-table-column>
       <el-table-column
         label="申请人"
         align="center"
@@ -226,40 +271,6 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-        :min-width="columnWidth"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
-            v-hasPermi="['bpm:oa-reim-purchase:create']"
-            v-show="scope.row.result === 3"
-            >编辑</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handleDetail(scope.row)"
-            v-hasPermi="['bpm:oa-reim-purchase:query']"
-            >详情</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleProcessDetail(scope.row)"
-            v-hasPermi="['bpm:process-instance:query']"
-            >审批进度</el-button
-          >
-        </template>
-      </el-table-column>
     </el-table>
     <!-- 分页组件 -->
     <pagination
@@ -275,6 +286,7 @@
 <script>
 import { getReimPage } from "@/api/bpm/purchase";
 import { createPrintReimBatch } from "@/api/bpm/printReimBatch";
+import { getConfigKey } from "@/api/infra/config";
 
 export default {
   name: "采购报销",
@@ -305,10 +317,18 @@ export default {
       multipleSelection: [], // 选择列表
       PRINT_REIM_TYPE_PURCHASE: 1, // 打印信息类型：采购
       columnWidth: "200",
+      recipientName: "",
+      recipientPhone: "",
     };
   },
   created() {
     this.getList();
+    getConfigKey("crc.recipient.name").then((resp) => {
+      this.recipientName = resp.data;
+    });
+    getConfigKey("crc.recipient.phone").then((resp) => {
+      this.recipientPhone = resp.data;
+    });
   },
   methods: {
     /** 查询列表 */

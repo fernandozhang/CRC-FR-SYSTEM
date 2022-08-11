@@ -69,6 +69,9 @@
         <itextpdf.version>5.5.13.3</itextpdf.version>
         <itextpdf-itext-asian.version>5.2.0</itextpdf-itext-asian.version>
         <itextpdf-tool-xmlworker>5.5.13.3</itextpdf-tool-xmlworker>
+        <!--   邮件    -->
+        <java-mail>1.6.2</java-mail>
+        <java-mail-activation>1.1.1</java-mail-activation>
     </properties>
 
     <dependencyManagement>
@@ -587,6 +590,18 @@
                 <groupId>com.itextpdf.tool</groupId>
                 <artifactId>xmlworker</artifactId>
                 <version>${itextpdf-tool-xmlworker}</version>
+            </dependency>
+
+            <!--     邮件工具      -->
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${java-mail}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>${java-mail-activation}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

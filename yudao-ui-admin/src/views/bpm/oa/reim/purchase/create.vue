@@ -266,7 +266,7 @@ export default {
         createReim(this.form).then((response) => {
           this.$modal.msgSuccess("发起成功");
           this.$modal
-            .confirm("发起成功，继续创建报销单？", "提示")
+            .confirm("发起成功，再创建一单？", "提示")
             .then(() => {
               // ...
               this.$tab.closeOpenPage({ path: "/purchase/index" });
