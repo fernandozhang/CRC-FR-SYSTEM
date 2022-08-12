@@ -151,6 +151,22 @@ public class PDFUtil {
         }
         return cell;
     }
+
+    /**
+     * 创建单元格(指定字体)
+     */
+    public static PdfPCell createCell(String value, Font font, Float fixedHeight) {
+        PdfPCell cell = new PdfPCell();
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        Paragraph elements = new Paragraph(value, font);
+        elements.setAlignment(Element.ALIGN_CENTER);
+        cell.addElement(elements);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setFixedHeight(fixedHeight);
+        return cell;
+    }
     /*------------------------创建表格单元格的方法end----------------------------*/
 
     /**
@@ -197,4 +213,24 @@ public class PDFUtil {
         return table;
     }
     /*--------------------------创建表格的方法end------------------- ---------*/
+
+    /**
+     * 设置字体、字体颜色、大小等
+     *
+     * @param fontSize
+     * @param fontStyle
+     * @return
+     * @throws DocumentException
+     * @throws IOException
+     */
+    public static Font setNormalFont(int fontSize, int fontStyle) {
+        BaseFont simpleChines = null;//设置文本字体
+        try {
+            simpleChines = BaseFont.createFont("STSongStd-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+        } catch (DocumentException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        Font chineseFont = new Font(simpleChines, fontSize, fontStyle, BaseColor.BLACK);//设置文本字号及颜色
+        return chineseFont;
+    }
 }

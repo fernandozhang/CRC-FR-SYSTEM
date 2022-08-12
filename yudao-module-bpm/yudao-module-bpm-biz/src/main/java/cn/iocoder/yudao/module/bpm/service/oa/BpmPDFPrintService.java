@@ -1,7 +1,5 @@
 package cn.iocoder.yudao.module.bpm.service.oa;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Copyright(C),2020-2022,Skyland
  * Author: YushanZhang
@@ -13,7 +11,7 @@ public interface BpmPDFPrintService<T> {
     /**
      * 生成PDF
      *
-     * @param response
+     * @param reqVO
      */
     public String generate(T reqVO);
 }

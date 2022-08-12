@@ -14,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class BpmReimPrintBatchController {
     @PostMapping("/create")
     @PreAuthorize("@ss.hasPermission('bpm:reim-print-batch:create')")
     @ApiOperation("创建报销批量打印记录")
-    public CommonResult<String> createPrintBatch(@Valid @RequestBody BpmReimPrintBatchCreateReqVO createReqVO, HttpServletResponse response) {
+    public CommonResult<String> createPrintBatch(@Valid @RequestBody BpmReimPrintBatchCreateReqVO createReqVO) {
         return success(bpmReimPrintBatchService.createBatch(getLoginUserId(), createReqVO));
     }
 

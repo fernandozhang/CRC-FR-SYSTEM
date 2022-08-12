@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.bpm.controller.admin.task;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.datapermission.core.annotation.DataPermission;
 import cn.iocoder.yudao.module.bpm.controller.admin.task.vo.task.*;
 import cn.iocoder.yudao.module.bpm.service.task.BpmTaskService;
 import io.swagger.annotations.Api;
@@ -46,6 +47,7 @@ public class BpmTaskController {
     @ApiOperation(value = "获得指定流程实例的任务列表", notes = "包括完成的、未完成的")
     @ApiImplicitParam(name = "processInstanceId", value = "流程实例的编号", required = true, dataTypeClass = String.class)
     @PreAuthorize("@ss.hasPermission('bpm:task:query')")
+    @DataPermission(enable = false)
     public CommonResult<List<BpmTaskRespVO>> getTaskListByProcessInstanceId(
         @RequestParam("processInstanceId") String processInstanceId) {
         return success(taskService.getTaskListByProcessInstanceId(processInstanceId));
@@ -54,6 +56,7 @@ public class BpmTaskController {
     @PutMapping("/approve")
     @ApiOperation("通过任务")
     @PreAuthorize("@ss.hasPermission('bpm:task:update')")
+    @DataPermission(enable = false)
     public CommonResult<Boolean> approveTask(@Valid @RequestBody BpmTaskApproveReqVO reqVO) {
         taskService.approveTask(getLoginUserId(), reqVO);
         return success(true);

@@ -65,7 +65,7 @@ yudao:
     base-package: cn.iocoder.yudao
   web:
     admin-ui:
-      url: http://dashboard.yudao.iocoder.cn # Admin 管理后台 UI 的地址
+      url: http://169.254.242.78 # Admin 管理后台 UI 的地址
   security:
     permit-all_urls:
       - /admin-ui/** # /resources/admin-ui 目录下的静态资源

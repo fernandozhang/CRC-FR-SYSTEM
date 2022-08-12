@@ -90,24 +90,27 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
 
             // create information table
             PdfPTable table = new PdfPTable(7);
-            table.setTotalWidth(PageSize.A4.rotate().getWidth() - 100);
+            table.setTotalWidth(PageSize.A4.rotate().getWidth() - 60);
             table.setLockedWidth(true);
+            table.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-            float[] columnWidths = new float[]{60f, 100f, 60f, 30f, 60f, 140f, 60f};
+            float[] columnWidths = new float[]{60f, 140f, 60f, 30f, 70f, 130f, 60f};
             table.setWidths(columnWidths);
 
-            table.addCell(PDFUtil.createCell("日期", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("项目", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("总价", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("汇率", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("总价（港币）", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("用途", PDFUtil.font));
-            table.addCell(PDFUtil.createCell("购买途径", PDFUtil.font));
+
+            table.addCell(generateHeader("日期"));
+            table.addCell(generateHeader("项目"));
+            table.addCell(generateHeader("总价"));
+            table.addCell(generateHeader("汇率"));
+            table.addCell(generateHeader("总价（港币）"));
+            table.addCell(generateHeader("用途"));
+            table.addCell(generateHeader("购买途径"));
 
             for (BpmOAReimPurchaseDO purchaseDO : purchaseDOList) {
                 table.addCell(PDFUtil.createCell(DateUtil.format(purchaseDO.getPayDate(), FORMAT_YEAR_MONTH_DAY), PDFUtil.font));
                 Paragraph obj = new Paragraph(purchaseDO.getPurchaseObjs(), PDFUtil.font);
                 table.addCell(obj);
+//                table.addCell(PDFUtil.createCell(purchaseDO.getPurchaseObjs(), PDFUtil.font));
                 // 判断单位
                 String priceUnit = "";
                 if (purchaseDO.getTotalUnit() == 1) {
@@ -125,6 +128,7 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 table.addCell(PDFUtil.createCell(purchaseDO.getTotalHkd().toString(), PDFUtil.font));
                 Paragraph usage = new Paragraph(purchaseDO.getUsage(), PDFUtil.font);
                 table.addCell(usage);
+//                table.addCell(PDFUtil.createCell(purchaseDO.getUsage(), PDFUtil.font));
                 table.addCell(PDFUtil.createCell(purchaseDO.getPurBy() == 1 ? "线上" : "线下", PDFUtil.font));
             }
 
@@ -149,13 +153,13 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 singleTable.setWidths(columnWidths); // float[] columnWidths = new float[]{60f, 100f, 60f, 30f, 60f, 140f, 60f};
 
                 // add row of information
-                singleTable.addCell(PDFUtil.createCell("日期", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("项目", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("总价（元）", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("汇率", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("总价（港币）", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("用途", PDFUtil.font));
-                singleTable.addCell(PDFUtil.createCell("购买途径", PDFUtil.font));
+                singleTable.addCell(generateHeader("日期"));
+                singleTable.addCell(generateHeader("项目"));
+                singleTable.addCell(generateHeader("总价（元）"));
+                singleTable.addCell(generateHeader("汇率"));
+                singleTable.addCell(generateHeader("总价（港币）"));
+                singleTable.addCell(generateHeader("用途"));
+                singleTable.addCell(generateHeader("购买途径"));
 
                 // 判断单位
                 String priceUnit = "";
@@ -172,11 +176,13 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 singleTable.addCell(PDFUtil.createCell(DateUtil.format(purchaseDO.getPayDate(), FORMAT_YEAR_MONTH_DAY), PDFUtil.font));
                 Paragraph obj = new Paragraph(purchaseDO.getPurchaseObjs(), PDFUtil.font);
                 singleTable.addCell(obj);
+//                singleTable.addCell(PDFUtil.createCell(purchaseDO.getPurchaseObjs(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(priceUnit + " " + purchaseDO.getTotalPrice().toString(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getExchangeRate().toString(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getTotalHkd().toString(), PDFUtil.font));
                 Paragraph usage = new Paragraph(purchaseDO.getUsage(), PDFUtil.font);
                 singleTable.addCell(usage);
+//                singleTable.addCell(PDFUtil.createCell(purchaseDO.getUsage(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getPurBy() == 1 ? "线上" : "线下", PDFUtil.font));
                 document.add(singleTable);
 
@@ -365,6 +371,18 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 copy.close();
             return bos.toByteArray();
         }
+    }
+
+    /**
+     * 整理表头字段
+     *
+     * @param header 表头名称
+     * @return
+     */
+    private PdfPCell generateHeader(String header) {
+        PdfPCell cell = PDFUtil.createCell(header, PDFUtil.setNormalFont(14, Font.NORMAL), 35f);
+        cell.setBackgroundColor(new BaseColor(240, 255, 240));
+        return cell;
     }
 
 }

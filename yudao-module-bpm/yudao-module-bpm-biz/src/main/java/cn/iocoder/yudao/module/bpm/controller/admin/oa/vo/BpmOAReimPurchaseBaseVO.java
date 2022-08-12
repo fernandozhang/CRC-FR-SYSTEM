@@ -5,9 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
@@ -61,6 +59,8 @@ public class BpmOAReimPurchaseBaseVO {
 
     @ApiModelProperty(value = "总价（港币）", required = true)
     @NotNull(message = "总价（港币）不能为空")
+    @Max(value = 10000L,message = "单笔报销总价不能超过 HK$ 10000")
+    @Min(value = 0L, message = "报销金额不能小于 HK$ 0")
     private Double totalHkd;
 
     @ApiModelProperty(value = "购买途径（1线上，2线下）", required = true)

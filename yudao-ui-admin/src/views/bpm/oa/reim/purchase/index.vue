@@ -1,39 +1,29 @@
 <template>
   <div class="app-container">
-    <el-row type="flex" justify="start" align="middle">
-      <el-col :span="16">
-        <el-steps
-          :active="7"
-          style="margin-top: 15px; margin-bottom: 20px"
-          simple
-        >
-          <el-step title="发起报销" description="填写、提交报销单"></el-step>
-          <el-step
-            title="上级审批"
-            description="团队或部门负责人审批"
-          ></el-step>
-          <el-step title="财务审批" description="财务部人员审批"></el-step>
-          <el-step
-            title="打印报销单"
-            description="全部审批通过，点击“打印”按钮，选择需要打印的报销单"
-          ></el-step>
-          <el-step
-            title="贴票"
-            description="粘贴收据，没有收据需填写遗失收据声明"
-          ></el-step>
-          <el-step title="邮寄文件" description="">
-            <template v-slot:description>
-              <span>地址：中国香港，沙田区，科学园三期17W，808-815室</span
-              ><br />
-              <span>收件人：{{ recipientName }}</span
-              ><br />
-              <span>联系电话：{{ recipientPhone }}</span>
-            </template>
-          </el-step>
-          <el-step title="出纳"></el-step>
-        </el-steps>
-      </el-col>
-    </el-row>
+    <el-steps :active="7" style="margin-bottom: 10px" simple>
+      <el-step title="发起报销"></el-step>
+      <el-step title="上级审批"></el-step>
+      <el-step title="财务部审批"></el-step>
+      <el-step title="打印报销单"></el-step>
+      <el-step title="贴票"></el-step>
+      <el-step title="邮寄文件"> </el-step>
+      <el-step title="出纳"></el-step>
+    </el-steps>
+    <el-alert
+      title="邮寄地址：中国香港，沙田区，科学园三期17W，808-815室"
+      type="info"
+      show-icon
+    />
+    <el-alert
+      type="info"
+      :title="'收件人：' + recipientName + '，联系电话：' + recipientPhone"
+      show-icon
+    />
+    <el-alert
+      type="info"
+      title="贴票时注意：没有收据需要填写遗失声明"
+      show-icon
+    />
     <!-- 搜索工作栏 -->
     <el-form
       :model="queryParams"
@@ -243,7 +233,12 @@
         :show-overflow-tooltip="true"
       >
         <template slot-scope="scope">
-          <el-button v-for="task in scope.row.tasks" :key="task.id" type="text">
+          <el-button
+            v-for="task in scope.row.tasks"
+            :key="task.id"
+            type="text"
+            @click="handleFormDetail(scope.row.processInstanceId)"
+          >
             <span>{{ task.name }}</span>
           </el-button>
         </template>
@@ -436,6 +431,13 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    /**处理详情 */
+    handleFormDetail(id) {
+      this.$router.push({
+        path: "/bpm/process-instance/detail",
+        query: { id: id },
+      });
+    },
   },
   watch: {
     list(value) {
@@ -450,3 +452,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.el-alert--info.is-light {
+  margin-bottom: 10px;
+}
+</style>

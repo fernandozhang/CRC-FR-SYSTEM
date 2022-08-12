@@ -8,16 +8,6 @@
       label-width="10vw"
       label-position="left"
     >
-      <!-- <el-form-item label="申请人" prop="reimPersonName">
-        <el-col :span="10">
-          <el-input
-            :rows="3"
-            v-model="form.reimPersonName"
-            placeholder="请输入姓名"
-            :disabled="true"
-          />
-        </el-col>
-      </el-form-item> -->
       <el-form-item label="是否有纸质收据" prop="paperReceipt">
         <el-radio-group
           v-model="form.paperReceipt"
@@ -179,6 +169,17 @@ export default {
   name: "PurchaseCreate",
   components: { ImageUpload },
   data() {
+    /**校验总金额大小 */
+    var checkTotalHkd = (rule, value, callback) => {
+      if (value < 0) {
+        console.log(value);
+        callback(new Error("报销范围在 HK$ 0-10000"));
+      } else if (value > 10000) {
+        callback(new Error("报销范围在 HK$ 0-10000"));
+      } else {
+        callback();
+      }
+    };
     return {
       // 表单参数
       form: {
@@ -224,6 +225,9 @@ export default {
         ],
         totalUnit: [
           { required: true, message: "货币种类不能为空", trigger: "change" },
+        ],
+        totalHkd: [
+          { type: "number", validator: checkTotalHkd, trigger: "blur" },
         ],
         orderImg: [],
         payImg: [],

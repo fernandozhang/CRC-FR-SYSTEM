@@ -34,7 +34,6 @@ import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUti
 @RestController
 @RequestMapping("/bpm/oa/reim/purchase")
 @Validated
-@DataPermission
 public class BpmOAReimPurchaseController {
 
     @Resource
@@ -43,6 +42,7 @@ public class BpmOAReimPurchaseController {
     @PostMapping("/create")
     @PreAuthorize("@ss.hasPermission('bpm:oa-reim-purchase:create')")
     @ApiOperation("创建采购报销申请")
+    @DataPermission(enable = false)
     public CommonResult<Long> createReim(@Valid @RequestBody BpmOAReimPurchaseCreateReqVO createReqVO) {
         return success(purchaseService.createReim(getLoginUserId(), createReqVO));
     }

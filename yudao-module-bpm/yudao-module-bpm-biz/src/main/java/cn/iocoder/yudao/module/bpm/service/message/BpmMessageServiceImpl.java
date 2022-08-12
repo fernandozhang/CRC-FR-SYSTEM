@@ -73,7 +73,7 @@ public class BpmMessageServiceImpl implements BpmMessageService {
 //        smsSendApi.sendSingleSmsToAdmin(BpmMessageConvert.INSTANCE.convert(reqDTO.getStartUserId(),
 //                BpmMessageEnum.TASK_ASSIGNED.getSmsTemplateCode(), templateParams));
         try {
-            emailApi.send(BpmEmailConvert.INSTANCE.convert(reqDTO.getStartUserId(), BpmEmailEnum.TASK_ASSIGNED.getEmailTemplateId(), templateParams));
+            emailApi.send(BpmEmailConvert.INSTANCE.convert(reqDTO.getAssigneeUserId(), BpmEmailEnum.TASK_ASSIGNED.getEmailTemplateId(), templateParams));
         } catch (Exception e) {
             log.error("Send Email Error",e);
         }
