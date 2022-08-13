@@ -56,6 +56,23 @@
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
       <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+        :min-width="columnWidth"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-document"
+            @click="handleQueryInfo(scope.row)"
+            v-hasPermi="['bpm:reim-print-batch:query']"
+            >详情</el-button
+          >
+        </template>
+      </el-table-column>
+      <el-table-column
         label="打印批次号"
         align="center"
         prop="id"
@@ -85,23 +102,6 @@
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-        :min-width="columnWidth"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-document"
-            @click="handleQueryInfo(scope.row)"
-            v-hasPermi="['bpm:reim-print-batch:query']"
-            >详情</el-button
-          >
         </template>
       </el-table-column>
     </el-table>

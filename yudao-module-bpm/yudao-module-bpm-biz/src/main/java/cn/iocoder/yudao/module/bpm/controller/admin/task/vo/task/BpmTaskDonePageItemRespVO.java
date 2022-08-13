@@ -23,5 +23,8 @@ public class BpmTaskDonePageItemRespVO extends BpmTaskTodoPageItemRespVO {
     private Integer result;
     @ApiModelProperty(value = "审批建议", required = true, example = "不请假了！")
     private String reason;
-
+    @ApiModelProperty(value = "采购报销编号", required = true, example = "1")
+    private Long purchaseId;
+    @ApiModelProperty(value = "采购项目", required = true, example = "相机")
+    private String purchaseObjs;
 }

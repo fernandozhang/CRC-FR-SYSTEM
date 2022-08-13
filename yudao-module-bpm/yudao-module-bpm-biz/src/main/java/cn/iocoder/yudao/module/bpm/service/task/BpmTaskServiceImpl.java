@@ -5,17 +5,22 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.number.NumberUtils;
 import cn.iocoder.yudao.framework.common.util.object.PageUtils;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.bpm.controller.admin.task.vo.task.*;
 import cn.iocoder.yudao.module.bpm.convert.task.BpmTaskConvert;
+import cn.iocoder.yudao.module.bpm.dal.dataobject.oa.BpmOAReimPurchaseDO;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.task.BpmTaskExtDO;
+import cn.iocoder.yudao.module.bpm.dal.mysql.oa.BpmOAReimPurchaseMapper;
 import cn.iocoder.yudao.module.bpm.dal.mysql.task.BpmTaskExtMapper;
 import cn.iocoder.yudao.module.bpm.enums.task.BpmProcessInstanceDeleteReasonEnum;
 import cn.iocoder.yudao.module.bpm.enums.task.BpmProcessInstanceResultEnum;
 import cn.iocoder.yudao.module.bpm.service.message.BpmMessageService;
+import cn.iocoder.yudao.module.bpm.service.oa.BpmOAReimPurchaseService;
 import cn.iocoder.yudao.module.system.api.dept.DeptApi;
 import cn.iocoder.yudao.module.system.api.dept.dto.DeptRespDTO;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
+import liquibase.pro.packaged.L;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
@@ -70,6 +75,8 @@ public class BpmTaskServiceImpl implements BpmTaskService {
     private RepositoryService repositoryService;
     @Resource
     private RuntimeService runtimeService;
+    @Resource
+    private BpmOAReimPurchaseMapper purchaseMapper;
 
     @Override
     public PageResult<BpmTaskTodoPageItemRespVO> getTodoTaskPage(Long userId, BpmTaskTodoPageReqVO pageVO) {
@@ -98,8 +105,20 @@ public class BpmTaskServiceImpl implements BpmTaskService {
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
             convertSet(processInstanceMap.values(), instance -> Long.valueOf(instance.getStartUserId())));
         // 拼接结果
-        return new PageResult<>(BpmTaskConvert.INSTANCE.convertList1(tasks, processInstanceMap, userMap),
+        PageResult<BpmTaskTodoPageItemRespVO> pageResult = new PageResult<>(BpmTaskConvert.INSTANCE.convertList1(tasks, processInstanceMap, userMap),
             taskQuery.count());
+        // 拼接报销信息
+        List<BpmTaskTodoPageItemRespVO> pageItems = pageResult.getList();
+        for(BpmTaskTodoPageItemRespVO pageItemRespVO : pageItems){
+            // 取出流程实例编号
+            String processInstanceId = pageItemRespVO.getProcessInstance().getId();
+            // 查询对应的采购报销信息
+            BpmOAReimPurchaseDO purchaseDO = purchaseMapper.selectOne(new LambdaQueryWrapperX<BpmOAReimPurchaseDO>()
+                    .eqIfPresent(BpmOAReimPurchaseDO::getProcessInstanceId, processInstanceId));
+            pageItemRespVO.setPurchaseId(purchaseDO.getId());
+            pageItemRespVO.setPurchaseObjs(purchaseDO.getPurchaseObjs());
+        }
+        return pageResult;
     }
 
     @Override
@@ -135,9 +154,21 @@ public class BpmTaskServiceImpl implements BpmTaskService {
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
             convertSet(historicProcessInstanceMap.values(), instance -> Long.valueOf(instance.getStartUserId())));
         // 拼接结果
-        return new PageResult<>(
+        PageResult<BpmTaskDonePageItemRespVO> pageResult =  new PageResult<>(
             BpmTaskConvert.INSTANCE.convertList2(tasks, bpmTaskExtDOMap, historicProcessInstanceMap, userMap),
             taskQuery.count());
+        // 拼接报销信息
+        List<BpmTaskDonePageItemRespVO> pageItems = pageResult.getList();
+        for(BpmTaskDonePageItemRespVO pageItemRespVO : pageItems){
+            // 取出流程实例编号
+            String processInstanceId = pageItemRespVO.getProcessInstance().getId();
+            // 查询对应的采购报销信息
+            BpmOAReimPurchaseDO purchaseDO = purchaseMapper.selectOne(new LambdaQueryWrapperX<BpmOAReimPurchaseDO>()
+                    .eqIfPresent(BpmOAReimPurchaseDO::getProcessInstanceId, processInstanceId));
+            pageItemRespVO.setPurchaseId(purchaseDO.getId());
+            pageItemRespVO.setPurchaseObjs(purchaseDO.getPurchaseObjs());
+        }
+        return pageResult;
     }
 
     @Override

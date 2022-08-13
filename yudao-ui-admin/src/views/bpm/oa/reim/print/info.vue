@@ -17,6 +17,23 @@
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
       <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+        :min-width="columnWidth"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleEdit(scope.row)"
+            v-hasPermi="['bpm:oa-reim-purchase:update']"
+            >编辑</el-button
+          >
+        </template>
+      </el-table-column>
+      <el-table-column
         label="流程实例编号"
         align="center"
         prop="processInstanceId"
@@ -48,23 +65,6 @@
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-        :min-width="columnWidth"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
-            v-hasPermi="['bpm:oa-reim-purchase:update']"
-            >编辑</el-button
-          >
         </template>
       </el-table-column>
     </el-table>

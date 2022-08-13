@@ -165,13 +165,6 @@
           />
         </template>
       </el-table-column>
-      <!-- <el-table-column
-        label="任务编号"
-        align="center"
-        prop="processInstanceId"
-        :min-width="columnWidth"
-        fixed
-      /> -->
       <el-table-column
         label="操作"
         align="center"
@@ -207,6 +200,12 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="报销编号"
+        align="center"
+        prop="id"
+        :min-width="columnWidth"
+      />
+      <el-table-column
         label="申请人"
         align="center"
         prop="reimPersonName"
@@ -217,7 +216,7 @@
         align="center"
         prop="purchaseObjs"
         :min-width="columnWidth"
-        :show-overflow-tooltip="true"
+        show-overflow-tooltip
       />
       <el-table-column
         label="总价（港币）"
@@ -377,7 +376,7 @@ export default {
       this.printMode = true;
       this.loading = true;
       // 查询已通过记录
-      this.queryParams.result = this.PROCESS_RESULT_SUCCESS;
+      this.queryParams.result = this.PROCESS_RESULT_SUCCESS.toString();
       // 执行查询
       this.getList(this.queryParams);
     },

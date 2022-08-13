@@ -39,8 +39,24 @@
 
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="任务编号" align="center" prop="id" width="320" />
-      <el-table-column label="任务名称" align="center" prop="name" />
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleAudit(scope.row)"
+            v-hasPermi="['bpm:task:update']"
+            >审批</el-button
+          >
+        </template>
+      </el-table-column>
+      <el-table-column label="报销编号" align="center" prop="purchaseId" min-width="80" />
+      <el-table-column label="采购项目" align="center" prop="purchaseObjs" />
       <el-table-column
         label="所属流程"
         align="center"
@@ -55,35 +71,19 @@
         label="创建时间"
         align="center"
         prop="createTime"
-        width="180"
+        min-width="100"
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="version" width="80">
+      <el-table-column label="状态" align="center" prop="version" min-width="80">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.suspensionState === 1"
             >激活</el-tag
           >
           <el-tag type="warning" v-if="scope.row.suspensionState === 2"
             >挂起</el-tag
-          >
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleAudit(scope.row)"
-            v-hasPermi="['bpm:task:update']"
-            >审批</el-button
           >
         </template>
       </el-table-column>

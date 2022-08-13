@@ -51,4 +51,9 @@ public class BpmTaskTodoPageItemRespVO {
 
     }
 
+    @ApiModelProperty(value = "采购报销编号", required = true, example = "1")
+    private Long purchaseId;
+    @ApiModelProperty(value = "采购项目", required = true, example = "相机")
+    private String purchaseObjs;
+
 }
