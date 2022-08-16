@@ -487,8 +487,15 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
         // 插入用户默认角色
         Long userId = user.getId();
-        Set<Long> roleSet = new HashSet<>();// 默认角色，成员
-        roleSet.add(129L);
+        Long deptId = user.getDeptId();
+        Set<Long> roleSet = new HashSet<>();// 默认角色
+        if (113L == deptId) {
+            // 财务人员
+            roleSet.add(128L);
+        } else {
+            // 成员
+            roleSet.add(129L);
+        }
         permissionService.assignUserRole(userId, roleSet);
 
         return userId;
