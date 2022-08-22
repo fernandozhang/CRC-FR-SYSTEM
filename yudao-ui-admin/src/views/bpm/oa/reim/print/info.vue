@@ -34,9 +34,9 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="流程实例编号"
+        label="报销编号"
         align="center"
-        prop="processInstanceId"
+        prop="id"
         :min-width="columnWidth"
       />
       <el-table-column

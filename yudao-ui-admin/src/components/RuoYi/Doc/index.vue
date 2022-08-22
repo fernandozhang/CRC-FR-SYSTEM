@@ -9,7 +9,8 @@ export default {
   name: 'YudaoDoc',
   data() {
     return {
-      url: 'http://www.iocoder.cn/Yudao/build-debugger-environment/?yudao'
+      // url: 'http://www.iocoder.cn/Yudao/build-debugger-environment/?yudao'
+      url: 'https://crc-fr-tutorial.readthedocs.io/en/latest/'
     }
   },
   methods: {
