@@ -7,6 +7,7 @@
       :rules="rules"
       label-width="10vw"
       label-position="left"
+      v-loading="loading"
     >
       <el-form-item label="是否有纸质收据" prop="paperReceipt">
         <el-radio-group
@@ -250,6 +251,8 @@ export default {
 
       /**采购报销编号 */
       id: undefined,
+
+      loading: true,
     };
   },
   created() {
@@ -257,10 +260,12 @@ export default {
     if (this.id) {
       this.getDetail();
     }
+    this.loading = false;
   },
   methods: {
     /** 提交按钮 */
     submitForm() {
+      this.loading = true;
       this.$refs["form"].validate((valid) => {
         if (!valid) {
           return;
@@ -268,6 +273,7 @@ export default {
 
         // 添加的提交
         createReim(this.form).then((response) => {
+          this.loading = false;
           this.$modal.msgSuccess("发起成功");
           this.$modal
             .confirm("发起成功，再创建一单？", "提示")
