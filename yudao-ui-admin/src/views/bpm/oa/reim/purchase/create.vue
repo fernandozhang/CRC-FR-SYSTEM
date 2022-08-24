@@ -40,7 +40,7 @@
             type="textarea"
             :rows="3"
             v-model="form.purchaseObjs"
-            placeholder="请输入采购的物品名称"
+            placeholder="请输入物品名称，可输入多个"
             :maxlength="500"
             :show-word-limit="true"
           />

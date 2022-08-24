@@ -2,7 +2,6 @@
   <div class="app-container">
     <el-steps :active="7" style="margin-bottom: 10px" simple>
       <el-step title="发起报销"></el-step>
-      <el-step title="上级审批"></el-step>
       <el-step title="财务部审批"></el-step>
       <el-step title="打印报销单"></el-step>
       <el-step title="贴票"></el-step>
