@@ -101,7 +101,7 @@
             prop="orderImg"
             v-if="form.orderImg != undefined && form.orderImg"
           >
-            <image-preview :src="form.orderImg" :width="10" :height="10" />
+            <image-preview :src="form.orderImg" :width="192" :height="108" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -110,7 +110,7 @@
             prop="payImg"
             v-if="form.payImg != undefined && form.payImg"
           >
-            <image-preview :src="form.payImg" :width="10" :height="10" />
+            <image-preview :src="form.payImg" :width="192" :height="108" />
           </el-form-item>
         </el-col>
       </el-row>
