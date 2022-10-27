@@ -1,12 +1,20 @@
 package cn.iocoder.yudao.module.bpm.controller.admin.oa.vo;
 
-import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.group.GroupSequenceProvider;
+import org.hibernate.validator.spi.group.DefaultGroupSequenceProvider;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 
@@ -21,6 +29,7 @@ import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_
  * 作者        修改时间      版本号        描述
  */
 @Data
+@GroupSequenceProvider(BpmOAReimPurchaseBaseVO.FareTypeGroupSequenceProvider.class)
 public class BpmOAReimPurchaseBaseVO {
     @ApiModelProperty(value = "购物报销表单主键", required = false)
     private Long id;
@@ -59,7 +68,7 @@ public class BpmOAReimPurchaseBaseVO {
 
     @ApiModelProperty(value = "总价（港币）", required = true)
     @NotNull(message = "总价（港币）不能为空")
-    @Max(value = 10000L,message = "单笔报销总价不能超过 HK$ 10000")
+    @Max(value = 10000L, message = "单笔报销总价不能超过 HK$ 10000")
     @Min(value = 0L, message = "报销金额不能小于 HK$ 0")
     private Double totalHkd;
 
@@ -68,32 +77,50 @@ public class BpmOAReimPurchaseBaseVO {
     private Integer purBy;
 
     @ApiModelProperty(value = "备注", required = false)
+    @NotNull(message = "备注不能为空", groups = WhenOver3000.class)
     private String remark;
 
+    @ApiModelProperty(value = "物品照片", required = false)
+    @NotNull(message = "物品照片不能为空", groups = WhenOver3000.class)
+    private String objsImg;
+
     @ApiModelProperty(value = "订单截图", required = false)
+    @NotNull(message = "订单截图不能为空", groups = WhenNoReceipt.class)
     private String orderImg;
 
     @ApiModelProperty(value = "付款截图", required = false)
+    @NotNull(message = "付款截图不能为空", groups = WhenNoReceipt.class)
     private String payImg;
 
-    @ApiModelProperty(value = "物品照片", required = false)
-    private String objsImg;
-
-    @AssertTrue
-    public Boolean noReceiptAndNoOrderImg() {
-        // 没有收据，也没有订单截图
-        if (!getPaperReceipt() && StrUtil.isEmpty(getOrderImg()))
-            return true;
-        else
-            return false;
+    // 没有收据
+    public interface WhenNoReceipt {
     }
 
-    @AssertTrue
-    public Boolean noReceiptAndNoPayImg() {
-        // 没有收据，也没有付款截图
-        if (!getPaperReceipt() && StrUtil.isEmpty(getPayImg()))
-            return true;
-        else
-            return false;
+    // 超过3000
+    public interface WhenOver3000 {
+    }
+
+    /**
+     * 校验分组处理器
+     */
+    public static class FareTypeGroupSequenceProvider implements DefaultGroupSequenceProvider<BpmOAReimPurchaseBaseVO> {
+
+        @Override
+        public List<Class<?>> getValidationGroups(BpmOAReimPurchaseBaseVO purchaseBaseVO) {
+            ArrayList<Class<?>> list = Lists.newArrayList();
+            list.add(BpmOAReimPurchaseBaseVO.class);
+            // 判空
+            if (Objects.nonNull(purchaseBaseVO)) {
+                if (!purchaseBaseVO.getPaperReceipt()) {
+                    // 没有收据
+                    list.add(WhenNoReceipt.class);
+                }
+                if (purchaseBaseVO.getTotalHkd() > 3000L) {
+                    // 超过3000
+                    list.add(WhenOver3000.class);
+                }
+            }
+            return list;
+        }
     }
 }

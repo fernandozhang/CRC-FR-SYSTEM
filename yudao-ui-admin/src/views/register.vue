@@ -14,96 +14,45 @@
         <!-- 表单 -->
         <div class="form-cont">
           <div class="form">
-            <el-form
-              ref="regForm"
-              :model="regForm"
-              :rules="RegRules"
-              class="reg-form"
-            >
+            <el-form ref="regForm" :model="regForm" :rules="RegRules" class="reg-form">
               <!-- 输入部门、账号、邮箱、密码 -->
               <div>
                 <el-form-item prop="deptId">
                   <el-select v-model="regForm.deptId" placeholder="请选择部门">
-                    <el-option
-                      v-for="item in depts"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
+                    <el-option v-for="item in depts" :key="item.id" :label="item.name" :value="item.id">
                     </el-option>
-                    <svg-icon
-                      slot="prefix"
-                      icon-class="tree"
-                      class="el-input__icon input-icon"
-                    />
+                    <svg-icon slot="prefix" icon-class="tree" class="el-input__icon input-icon" />
                   </el-select>
                 </el-form-item>
                 <el-form-item prop="username">
-                  <el-input
-                    v-model="regForm.username"
-                    type="text"
-                    auto-complete="off"
-                    placeholder="账号"
-                  >
-                    <svg-icon
-                      slot="prefix"
-                      icon-class="user"
-                      class="el-input__icon input-icon"
-                    />
+                  <el-input v-model="regForm.username" type="text" auto-complete="off" placeholder="账号">
+                    <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
                   </el-input>
                 </el-form-item>
                 <el-form-item prop="email">
-                  <el-input
-                    v-model="regForm.email"
-                    type="text"
-                    auto-complete="off"
-                    placeholder="邮箱"
-                  >
+                  <el-input v-model="regForm.email" type="text" auto-complete="off" placeholder="邮箱">
                     <!-- <i class="el-icon-edit"></i> -->
-                    <svg-icon
-                      slot="prefix"
-                      icon-class="email"
-                      class="el-input__icon input-icon"
-                    />
+                    <svg-icon slot="prefix" icon-class="email" class="el-input__icon input-icon" />
                   </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                  <el-input
-                    v-model="regForm.password"
-                    type="password"
-                    auto-complete="off"
-                    placeholder="密码"
-                  >
-                    <svg-icon
-                      slot="prefix"
-                      icon-class="password"
-                      class="el-input__icon input-icon"
-                    />
+                  <el-input v-model="regForm.password" type="password" auto-complete="off" placeholder="密码">
+                    <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
                   </el-input>
                 </el-form-item>
               </div>
 
               <!-- 下方的登录按钮 -->
               <el-form-item style="width: 100%">
-                <el-button
-                  :loading="loading"
-                  size="medium"
-                  type="primary"
-                  style="width: 100%"
-                  @click.native.prevent="handleRegister"
-                >
+                <el-button :loading="loading" size="medium" type="primary" style="width: 100%"
+                  @click.native.prevent="handleRegister">
                   <span v-if="!loading">注 册</span>
                   <span v-else>注 册 中...</span>
                 </el-button>
               </el-form-item>
               <el-form-item style="width: 100%">
-                <el-button
-                  :loading="loading"
-                  size="medium"
-                  type="primary"
-                  style="width: 100%"
-                  @click.native.prevent="handleReturn"
-                >
+                <el-button :loading="loading" size="medium" type="primary" style="width: 100%"
+                  @click.native.prevent="handleReturn">
                   <span>返 回</span>
                 </el-button>
               </el-form-item>
@@ -177,7 +126,11 @@ export default {
     this.tenantEnable = getTenantEnable();
     // 重定向地址
     this.redirect = this.$route.query.redirect;
-    listSimpleDepts().then((resp) => (this.depts = resp.data));
+    listSimpleDepts().then((resp) => {
+      this.depts = resp.data
+      let index = this.depts.findIndex(ele => ele.id === 113)
+      this.depts.splice(index, 1);
+    });
   },
   methods: {
     handleRegister() {
@@ -188,7 +141,7 @@ export default {
           console.log("发起注册", this.regForm);
           register(this.regForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || "/" }).catch(() => {});
+              this.$router.push({ path: this.redirect || "/" }).catch(() => { });
             })
             .catch(() => {
               this.loading = false;
@@ -197,7 +150,7 @@ export default {
       });
     },
     handleReturn() {
-      this.$router.push({ path: this.redirect || "/" }).catch(() => {});
+      this.$router.push({ path: this.redirect || "/" }).catch(() => { });
     },
   },
 };
