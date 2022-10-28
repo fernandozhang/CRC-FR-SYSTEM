@@ -155,7 +155,7 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 // add row of information
                 singleTable.addCell(generateHeader("日期"));
                 singleTable.addCell(generateHeader("项目"));
-                singleTable.addCell(generateHeader("总价（元）"));
+                singleTable.addCell(generateHeader("总价"));
                 singleTable.addCell(generateHeader("汇率"));
                 singleTable.addCell(generateHeader("总价（港币）"));
                 singleTable.addCell(generateHeader("用途"));
