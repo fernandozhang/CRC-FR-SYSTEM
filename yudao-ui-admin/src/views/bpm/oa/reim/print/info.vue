@@ -3,66 +3,23 @@
     <!-- 操作 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-print"
-          size="mini"
-          v-hasPermi="['bpm:reim-print-batch:print']"
-          @click="handlePrint"
-          >打印</el-button
-        >
+        <el-button type="primary" plain icon="el-icon-print" size="mini" v-hasPermi="['bpm:reim-print-batch:print']"
+          @click="handlePrint">打印</el-button>
       </el-col>
     </el-row>
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-        :min-width="columnWidth"
-      >
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" :min-width="columnWidth">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
-            v-hasPermi="['bpm:oa-reim-purchase:update']"
-            >编辑</el-button
-          >
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(scope.row)"
+            v-hasPermi="['bpm:oa-reim-purchase:update']">编辑</el-button>
         </template>
       </el-table-column>
-      <el-table-column
-        label="报销编号"
-        align="center"
-        prop="id"
-        :min-width="columnWidth"
-      />
-      <el-table-column
-        label="报销项目"
-        align="center"
-        prop="purchaseObjs"
-        :min-width="columnWidth"
-      />
-      <el-table-column
-        label="总价（港币）"
-        align="center"
-        prop="totalHkd"
-        :min-width="columnWidth"
-      />
-      <el-table-column
-        label="提交人"
-        align="center"
-        prop="reimPersonName"
-        :min-width="columnWidth"
-      />
-      <el-table-column
-        label="提交时间"
-        align="center"
-        prop="createTime"
-        :min-width="columnWidth"
-      >
+      <el-table-column label="报销编号" align="center" prop="id" :min-width="columnWidth" />
+      <el-table-column label="报销项目" align="center" prop="purchaseObjs" :min-width="columnWidth" />
+      <el-table-column label="总价（港币）" align="center" prop="totalHkd" :min-width="columnWidth" />
+      <el-table-column label="提交人" align="center" prop="reimPersonName" :min-width="columnWidth" />
+      <el-table-column label="提交时间" align="center" prop="createTime" :min-width="columnWidth">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -129,5 +86,15 @@ export default {
       });
     },
   },
+  watch: {
+    "$route.query.id"(value) {
+      if (!value)
+        return;
+      else {
+        this.id = this.$route.query.id;
+        this.getList();
+      }
+    }
+  }
 };
 </script>
