@@ -89,15 +89,15 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
             document.add(new Paragraph("\n\r", PDFUtil.font));
 
             // create information table
-            PdfPTable table = new PdfPTable(7);
+            PdfPTable table = new PdfPTable(9);
             table.setTotalWidth(PageSize.A4.rotate().getWidth() - 60);
             table.setLockedWidth(true);
             table.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-            float[] columnWidths = new float[]{60f, 140f, 60f, 30f, 70f, 130f, 60f};
+            float[] columnWidths = new float[]{30f, 60f, 130f, 60f, 30f, 70f, 120f, 60f, 140f};
             table.setWidths(columnWidths);
 
-
+            table.addCell(generateHeader("序号"));
             table.addCell(generateHeader("日期"));
             table.addCell(generateHeader("项目"));
             table.addCell(generateHeader("总价"));
@@ -105,8 +105,11 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
             table.addCell(generateHeader("总价（港币）"));
             table.addCell(generateHeader("用途"));
             table.addCell(generateHeader("购买途径"));
+            table.addCell(generateHeader("备注"));
 
-            for (BpmOAReimPurchaseDO purchaseDO : purchaseDOList) {
+            for (int i = 0, j = purchaseDOList.size(); i < j; i++) {
+                BpmOAReimPurchaseDO purchaseDO = purchaseDOList.get(i);
+                table.addCell(PDFUtil.createCell(String.valueOf(i + 1), PDFUtil.font));// 序号
                 table.addCell(PDFUtil.createCell(DateUtil.format(purchaseDO.getPayDate(), FORMAT_YEAR_MONTH_DAY), PDFUtil.font));
                 Paragraph obj = new Paragraph(purchaseDO.getPurchaseObjs(), PDFUtil.font);
                 table.addCell(obj);
@@ -130,6 +133,7 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 table.addCell(usage);
 //                table.addCell(PDFUtil.createCell(purchaseDO.getUsage(), PDFUtil.font));
                 table.addCell(PDFUtil.createCell(purchaseDO.getPurBy() == 1 ? "线上" : "线下", PDFUtil.font));
+                table.addCell(PDFUtil.createCell(purchaseDO.getRemark(), PDFUtil.font));
             }
 
             document.add(table);
@@ -138,7 +142,8 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
 
             //========================================================page 2============================================================//
 
-            for (BpmOAReimPurchaseDO purchaseDO : purchaseDOList) {
+            for (int i = 0, j = purchaseDOList.size(); i < j; i++) {
+                BpmOAReimPurchaseDO purchaseDO = purchaseDOList.get(i);
                 boolean hasPaperReceipt = purchaseDO.getPaperReceipt();
                 String content = hasPaperReceipt ? "有收据" : "线上支付记录";
 
@@ -146,13 +151,14 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 document.add(new Paragraph('\t' + "(" + content + ")", PDFUtil.font));
                 document.add(new Paragraph("\n\r", PDFUtil.font));
 
-                PdfPTable singleTable = new PdfPTable(7);
-                singleTable.setTotalWidth(PageSize.A4.rotate().getWidth() - 100);
+                PdfPTable singleTable = new PdfPTable(9);
+                singleTable.setTotalWidth(PageSize.A4.rotate().getWidth() - 60);
                 singleTable.setLockedWidth(true);
 
                 singleTable.setWidths(columnWidths); // float[] columnWidths = new float[]{60f, 100f, 60f, 30f, 60f, 140f, 60f};
 
                 // add row of information
+                singleTable.addCell(generateHeader("序号"));
                 singleTable.addCell(generateHeader("日期"));
                 singleTable.addCell(generateHeader("项目"));
                 singleTable.addCell(generateHeader("总价"));
@@ -160,6 +166,7 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                 singleTable.addCell(generateHeader("总价（港币）"));
                 singleTable.addCell(generateHeader("用途"));
                 singleTable.addCell(generateHeader("购买途径"));
+                singleTable.addCell(generateHeader("备注"));
 
                 // 判断单位
                 String priceUnit = "";
@@ -173,22 +180,22 @@ public class BpmPDFPrintPurchaseServiceImpl implements BpmPDFPrintService<BpmPDF
                     priceUnit = "?";
                 }
 
+                singleTable.addCell(PDFUtil.createCell(String.valueOf(i + 1), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(DateUtil.format(purchaseDO.getPayDate(), FORMAT_YEAR_MONTH_DAY), PDFUtil.font));
                 Paragraph obj = new Paragraph(purchaseDO.getPurchaseObjs(), PDFUtil.font);
                 singleTable.addCell(obj);
-//                singleTable.addCell(PDFUtil.createCell(purchaseDO.getPurchaseObjs(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(priceUnit + " " + purchaseDO.getTotalPrice().toString(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getExchangeRate().toString(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getTotalHkd().toString(), PDFUtil.font));
                 Paragraph usage = new Paragraph(purchaseDO.getUsage(), PDFUtil.font);
                 singleTable.addCell(usage);
-//                singleTable.addCell(PDFUtil.createCell(purchaseDO.getUsage(), PDFUtil.font));
                 singleTable.addCell(PDFUtil.createCell(purchaseDO.getPurBy() == 1 ? "线上" : "线下", PDFUtil.font));
+                singleTable.addCell(PDFUtil.createCell(purchaseDO.getRemark(), PDFUtil.font));
                 document.add(singleTable);
 
                 // add image table
                 PdfPTable picTable = new PdfPTable(5);
-                picTable.setTotalWidth(PageSize.A4.rotate().getWidth() - 100);
+                picTable.setTotalWidth(PageSize.A4.rotate().getWidth() - 60);
                 picTable.setLockedWidth(true);
 
                 if (!hasPaperReceipt) {
